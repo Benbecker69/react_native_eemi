@@ -33,7 +33,13 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Repère utilise votre position pour trouver les espaces les plus proches et confirmer votre arrivée."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
