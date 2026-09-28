@@ -14,6 +14,7 @@ const palette = {
     accentText: "#ffffff",
     border: "#d8d6d0",
     danger: "#b3261e",
+    skeleton: "#dcdad4",
   },
   dark: {
     background: "#14171a",
@@ -24,6 +25,7 @@ const palette = {
     accentText: "#0b1210",
     border: "#2c3136",
     danger: "#ff6b60",
+    skeleton: "#2a3035",
   },
 } as const;
 
@@ -36,6 +38,8 @@ export type Colors = {
   accentText: string;
   border: string;
   danger: string;
+  /** Placeholder blocks shown while data loads. */
+  skeleton: string;
 };
 
 export function useColors(): Colors {

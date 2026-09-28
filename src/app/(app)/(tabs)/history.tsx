@@ -1,11 +1,12 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useColors } from "@/theme/colors";
 import { ScreenState } from "@/components/ScreenState";
+import { ListSkeleton } from "@/components/skeletons";
 import { ApiError } from "@/services/ApiError";
 import { listCheckIns } from "@/services/checkInsService";
-import { formatDateTime, formatDistance } from "@/utils/format";
+import { checkInReasonLabel, formatDateTime, formatDistance } from "@/utils/format";
 import type { CheckInHistoryDto } from "@/types/api";
 
 const PAGE_SIZE = 20;
@@ -37,7 +38,7 @@ export default function HistoryScreen() {
             <Text style={{ color: colors.inkMuted }}>
               Chaque tentative d’arrivée est gardée, acceptée ou non.
             </Text>
-            {query.isPending ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
+            {query.isPending ? <ListSkeleton /> : null}
             {query.isError ? (
               <ScreenState
                 tone="danger"
@@ -58,7 +59,7 @@ export default function HistoryScreen() {
           if (query.hasNextPage && !query.isFetchingNextPage) query.fetchNextPage();
         }}
         ListFooterComponent={
-          query.isFetchingNextPage ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null
+          query.isFetchingNextPage ? <ListSkeleton count={1} /> : null
         }
         refreshing={query.isRefetching && !query.isFetchingNextPage}
         onRefresh={() => query.refetch()}
@@ -79,7 +80,7 @@ function CheckInRow({ item }: { item: CheckInHistoryDto }) {
       </View>
       <View style={styles.rowMeta}>
         <Text style={{ color: tone, fontWeight: "700" }}>
-          {item.accepted ? "Arrivée validée" : reasonLabel(item.reason)}
+          {item.accepted ? "Arrivée validée" : checkInReasonLabel(item.reason)}
         </Text>
         <Text style={{ color: colors.inkMuted }}>{formatDistance(item.distanceM)}</Text>
       </View>
@@ -87,31 +88,11 @@ function CheckInRow({ item }: { item: CheckInHistoryDto }) {
   );
 }
 
-function reasonLabel(reason: CheckInHistoryDto["reason"]): string {
-  switch (reason) {
-    case "TOO_EARLY":
-      return "Trop tôt";
-    case "TOO_LATE":
-      return "Trop tard";
-    case "TOO_FAR":
-      return "Trop loin";
-    case "LOW_ACCURACY":
-      return "Précision insuffisante";
-    case "STALE_POSITION":
-      return "Position trop ancienne";
-    case "NOT_CONFIRMED":
-      return "Réservation non confirmée";
-    default:
-      return "Refusée";
-  }
-}
-
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   list: { padding: 16, gap: 12, flexGrow: 1 },
   header: { gap: 8, marginBottom: 4 },
   title: { fontSize: 24, fontWeight: "700" },
-  spinner: { alignSelf: "flex-start" },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -1,4 +1,14 @@
-import { formatCredits, formatDateTime, formatDistance, formatTimeRange } from "../format";
+import {
+  formatCredits,
+  formatCreditsSpent,
+  formatDateTime,
+  formatDayHeading,
+  formatDistance,
+  formatHourRange,
+  formatSlotLabel,
+  formatTimeRange,
+  spaceTypeLabel,
+} from "../format";
 
 // formatDistance/formatCredits are plain arithmetic — asserted exactly.
 // formatDateTime/formatTimeRange go through Intl.DateTimeFormat: the exact
@@ -45,5 +55,50 @@ describe("formatTimeRange", () => {
     expect(range).toContain("–");
     expect(range).toMatch(/11.00/);
     expect(range).toMatch(/12.00/);
+  });
+});
+
+describe("formatCreditsSpent", () => {
+  it("prefixes the cost with a minus and keeps the plural rule", () => {
+    expect(formatCreditsSpent(3)).toBe("-3 crédits");
+    expect(formatCreditsSpent(1)).toBe("-1 crédit");
+  });
+});
+
+describe("formatSlotLabel", () => {
+  it("shows the day, the hour range and its length", () => {
+    const label = formatSlotLabel(new Date(2026, 8, 28), 14, 17);
+    expect(label).toContain("28");
+    expect(label).toContain("14h–17h");
+    expect(label).toContain("3 h");
+  });
+});
+
+describe("formatDayHeading", () => {
+  it("capitalizes only the first letter, leaving the month lowercase", () => {
+    expect(formatDayHeading(new Date(2026, 8, 28))).toBe("Lundi 28 septembre");
+  });
+});
+
+describe("formatHourRange", () => {
+  it("shows a whole-hour range without minutes", () => {
+    expect(formatHourRange("2026-09-28T12:00:00.000Z", "2026-09-28T15:00:00.000Z")).toBe("14h–17h");
+  });
+
+  it("keeps the minutes of an older 30-minute-aligned booking", () => {
+    expect(formatHourRange("2026-09-28T12:30:00.000Z", "2026-09-28T14:00:00.000Z")).toBe("14h30–16h");
+  });
+});
+
+describe("spaceTypeLabel", () => {
+  it("translates every known space type", () => {
+    expect(spaceTypeLabel("salle-reunion")).toBe("Salle de réunion");
+    expect(spaceTypeLabel("bureau-prive")).toBe("Bureau privé");
+    expect(spaceTypeLabel("poste-flex")).toBe("Poste flex");
+    expect(spaceTypeLabel("phone-booth")).toBe("Phone booth");
+  });
+
+  it("passes an unrecognized type through unchanged", () => {
+    expect(spaceTypeLabel("futuriste")).toBe("futuriste");
   });
 });

@@ -1,10 +1,11 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/features/auth/AuthContext";
 import { me } from "@/services/authService";
 import { ApiError } from "@/services/ApiError";
 import { useColors } from "@/theme/colors";
+import { ProfileSkeleton } from "@/components/skeletons";
 
 // The one tab with real content in Phase 3: proves the session survives a
 // restart (GET /me succeeds using the restored token) and that logout really
@@ -20,7 +21,7 @@ export default function ProfileScreen() {
         <Text style={[styles.title, { color: colors.ink }]}>Profil</Text>
 
         {query.isPending ? (
-          <ActivityIndicator color={colors.accent} style={styles.spinner} />
+          <ProfileSkeleton />
         ) : query.isError ? (
           <View style={styles.card}>
             <Text style={{ color: colors.danger }}>
@@ -65,7 +66,6 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   content: { flex: 1, padding: 24, gap: 16 },
   title: { fontSize: 24, fontWeight: "700" },
-  spinner: { marginTop: 12, alignSelf: "flex-start" },
   card: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 12,
