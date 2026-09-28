@@ -92,6 +92,8 @@ export type NearbySpace = {
   location: LocationDto;
   distanceM: number | null;
   estimatedCredits: number;
+  /** Already taken on the requested slot (only ever true with `includeBusy`). */
+  busy: boolean;
 };
 
 export type NearbyResult = {
@@ -101,6 +103,14 @@ export type NearbyResult = {
 };
 
 export type AuthResult = { token: string; expiresAt: string; user: MeUser };
+
+export type BusySlot = { startAt: string; endAt: string };
+
+export type SpaceAvailability = {
+  space: SpaceDto;
+  location: LocationDto;
+  busySlots: BusySlot[];
+};
 
 // Every error code the API documents (docs/api-mobile.md) — kept as a union
 // so a `switch` on `error.code` gets exhaustiveness checking; `string` is
@@ -124,6 +134,7 @@ export type ApiErrorCode =
   | "CONFLICT"
   | "VALIDATION_ERROR"
   | "SLOT_IN_PAST"
+  | "SLOT_TOO_FAR"
   | "SLOT_TOO_SHORT"
   | "SLOT_TOO_LONG"
   | "TOO_MANY_ATTEMPTS"

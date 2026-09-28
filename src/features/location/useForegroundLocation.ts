@@ -9,7 +9,14 @@ import * as Location from "expo-location";
 
 export type LocationPermissionState = "unknown" | "undetermined" | "granted" | "denied";
 
-export type ForegroundLocationCoords = { lat: number; lng: number };
+export type ForegroundLocationCoords = {
+  lat: number;
+  lng: number;
+  /** `null` on platforms that don't report it (see expo-location's own type) — never invented. */
+  accuracyM: number | null;
+  /** ISO 8601, from the fix's own `timestamp` — the check-in mutation needs this, not "now". */
+  capturedAt: string;
+};
 
 export type ForegroundLocation = {
   /** Only "unknown" until the first silent check resolves — a screen should render no permission UI for it, to avoid a flash. */
@@ -23,15 +30,30 @@ export type ForegroundLocation = {
   request: () => Promise<ForegroundLocationCoords | null>;
 };
 
-const ACCURACY = Location.Accuracy.Balanced;
-
 function permissionFromStatus(status: Location.PermissionStatus): LocationPermissionState {
   if (status === Location.PermissionStatus.GRANTED) return "granted";
   if (status === Location.PermissionStatus.UNDETERMINED) return "undetermined";
   return "denied";
 }
 
-export function useForegroundLocation(): ForegroundLocation {
+function toCoords(position: Location.LocationObject): ForegroundLocationCoords {
+  return {
+    lat: position.coords.latitude,
+    lng: position.coords.longitude,
+    accuracyM: position.coords.accuracy,
+    capturedAt: new Date(position.timestamp).toISOString(),
+  };
+}
+
+/**
+ * @param accuracy Defaults to `Balanced` (~100 m — enough to sort a list by
+ * distance). The check-in screen passes `Location.Accuracy.High` instead: the
+ * server rejects a fix worse than 100 m (`LOW_ACCURACY`), so `Balanced` would
+ * sit right at that edge.
+ */
+export function useForegroundLocation(
+  accuracy: Location.LocationAccuracy = Location.Accuracy.Balanced,
+): ForegroundLocation {
   const [permission, setPermission] = useState<LocationPermissionState>("unknown");
   const [canAskAgain, setCanAskAgain] = useState(true);
   const [coords, setCoords] = useState<ForegroundLocationCoords | null>(null);
@@ -57,10 +79,8 @@ export function useForegroundLocation(): ForegroundLocation {
       setPermission(permissionFromStatus(response.status));
       setCanAskAgain(response.canAskAgain);
       if (response.granted) {
-        const position = await Location.getCurrentPositionAsync({ accuracy: ACCURACY });
-        if (mountedRef.current) {
-          setCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
-        }
+        const position = await Location.getCurrentPositionAsync({ accuracy });
+        if (mountedRef.current) setCoords(toCoords(position));
       } else if (mountedRef.current) {
         setCoords(null);
       }
@@ -72,7 +92,7 @@ export function useForegroundLocation(): ForegroundLocation {
     } finally {
       if (mountedRef.current) setIsLocating(false);
     }
-  }, []);
+  }, [accuracy]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -106,8 +126,8 @@ export function useForegroundLocation(): ForegroundLocation {
       setPermission(permissionFromStatus(response.status));
       if (!response.granted) return null;
 
-      const position = await Location.getCurrentPositionAsync({ accuracy: ACCURACY });
-      const next = { lat: position.coords.latitude, lng: position.coords.longitude };
+      const position = await Location.getCurrentPositionAsync({ accuracy });
+      const next = toCoords(position);
       setCoords(next);
       return next;
     } catch {
@@ -118,7 +138,7 @@ export function useForegroundLocation(): ForegroundLocation {
     } finally {
       setIsLocating(false);
     }
-  }, []);
+  }, [accuracy]);
 
   return { permission, canAskAgain, coords, isLocating, positionError, request };
 }
