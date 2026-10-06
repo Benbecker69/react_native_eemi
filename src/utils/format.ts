@@ -76,6 +76,11 @@ export function formatHourRange(startIso: string, endIso: string): string {
   return `${formatHourMinute(new Date(startIso))}–${formatHourMinute(new Date(endIso))}`;
 }
 
+/** A single point in time, hour only ("14h30") — for a day already shown elsewhere (a section header). */
+export function formatTime(iso: string): string {
+  return formatHourMinute(new Date(iso));
+}
+
 export function formatDistance(meters: number | null): string {
   if (meters === null) return "Distance inconnue";
   if (meters < 1000) return `${Math.round(meters)} m`;
@@ -120,6 +125,8 @@ export function checkInReasonLabel(reason: CheckInReason | null): string {
       return "Position trop ancienne";
     case "NOT_CONFIRMED":
       return "Réservation non confirmée";
+    case "WRONG_SPACE":
+      return "Mauvais espace scanné";
     default:
       return "Refusée";
   }

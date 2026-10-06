@@ -14,17 +14,24 @@ const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"]; // Monday first
 
 type MonthCalendarProps = {
   selected: Date;
-  /** First selectable day (today). Earlier days are greyed out. */
+  /** First selectable day. Earlier days are greyed out. */
   minDate: Date;
   /** Last selectable day. Later days are greyed out and the month arrows stop here. */
   maxDate: Date;
   onSelect: (date: Date) => void;
+  /**
+   * The day that gets the "today" ring. Defaults to `new Date()` — booking
+   * screens happen to also use today as `minDate`, but the history filter
+   * reuses this same component with `minDate` a year back, so the two can no
+   * longer be assumed to be the same day.
+   */
+  today?: Date;
 };
 
 // A real month view: arrows to change month, days you can tap, today ringed,
-// past days and days beyond the booking horizon greyed out. Presentational —
-// the month grid and date math live in `features/booking/calendar.ts`.
-export function MonthCalendar({ selected, minDate, maxDate, onSelect }: MonthCalendarProps) {
+// out-of-range days greyed out. Presentational — the month grid and date
+// math live in `features/booking/calendar.ts`.
+export function MonthCalendar({ selected, minDate, maxDate, onSelect, today = new Date() }: MonthCalendarProps) {
   const colors = useColors();
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(selected));
 
@@ -69,7 +76,7 @@ export function MonthCalendar({ selected, minDate, maxDate, onSelect }: MonthCal
             if (!day) return <View key={dayIndex} style={styles.cell} />;
             const disabled = day.getTime() < firstSelectable || day.getTime() > lastSelectable;
             const active = isSameDay(day, selected);
-            const today = isSameDay(day, minDate);
+            const isToday = isSameDay(day, today);
             return (
               <Pressable
                 key={dayIndex}
@@ -87,7 +94,7 @@ export function MonthCalendar({ selected, minDate, maxDate, onSelect }: MonthCal
                       {
                         backgroundColor: active ? colors.accent : "transparent",
                         // Always an explicit color: a border with none is drawn black.
-                        borderColor: today && !active ? colors.accent : "transparent",
+                        borderColor: isToday && !active ? colors.accent : "transparent",
                         opacity: pressed ? 0.7 : 1,
                       },
                     ]}
@@ -141,7 +148,7 @@ function NavButton({
 const styles = StyleSheet.create({
   container: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 12, padding: 8, gap: 4 },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  title: { fontSize: 16, fontWeight: "700", textTransform: "capitalize" },
+  title: { fontSize: 16, fontFamily: "Fraunces_500Medium", textTransform: "capitalize" },
   navButton: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
   week: { flexDirection: "row" },
   weekday: { flex: 1, textAlign: "center", fontSize: 12, fontWeight: "600", paddingVertical: 4 },

@@ -6,6 +6,7 @@ import {
   formatDistance,
   formatHourRange,
   formatSlotLabel,
+  formatTime,
   formatTimeRange,
   spaceTypeLabel,
 } from "../format";
@@ -100,5 +101,15 @@ describe("spaceTypeLabel", () => {
 
   it("passes an unrecognized type through unchanged", () => {
     expect(spaceTypeLabel("futuriste")).toBe("futuriste");
+  });
+});
+
+describe("formatTime", () => {
+  it("formats a whole hour without minutes", () => {
+    expect(formatTime("2026-09-28T12:00:00.000Z")).toBe("14h");
+  });
+
+  it("keeps the minutes when not on the hour", () => {
+    expect(formatTime("2026-09-28T12:30:00.000Z")).toBe("14h30");
   });
 });
