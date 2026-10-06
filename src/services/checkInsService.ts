@@ -21,7 +21,14 @@ export function listCheckIns(
  */
 export function createCheckIn(
   reservationId: string,
-  input: { lat: number; lng: number; accuracyM: number; capturedAt: string },
+  input: {
+    lat: number;
+    lng: number;
+    accuracyM: number;
+    capturedAt: string;
+    // The space id read from a scanned QR code — optional, see `features/checkins/qr.ts`.
+    scannedSpaceId?: string;
+  },
 ): Promise<{ checkIn: CheckInDto; radiusM: number }> {
   return apiFetch<{ checkIn: CheckInDto; radiusM: number }>(
     `/reservations/${reservationId}/check-in`,

@@ -1,23 +1,27 @@
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Location from "expo-location";
 import { useColors } from "@/theme/colors";
 import { ScreenState } from "@/components/ScreenState";
 import { ReservationHeaderCard } from "@/components/ReservationHeaderCard";
+import { StatusPill } from "@/components/StatusPill";
 import { DetailSkeleton } from "@/components/skeletons";
 import { ApiError } from "@/services/ApiError";
 import { cancelReservation, getReservation } from "@/services/reservationsService";
 import { createCheckIn } from "@/services/checkInsService";
 import { canCancelReservation } from "@/features/reservations/rules";
+import { useToast } from "@/features/feedback/ToastContext";
 import { checkInReasonLabel, formatDateTime } from "@/utils/format";
 import { useForegroundLocation } from "@/features/location/useForegroundLocation";
 import type { CheckInDto, CheckInState, ReservationDto } from "@/types/api";
 
 export default function ReservationDetailScreen() {
   const colors = useColors();
+  const router = useRouter();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const query = useQuery({
@@ -33,10 +37,17 @@ export default function ReservationDetailScreen() {
 
   const cancelMutation = useMutation({
     mutationFn: () => cancelReservation(id),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["reservation", id] });
       queryClient.invalidateQueries({ queryKey: ["reservations"] });
       queryClient.invalidateQueries({ queryKey: ["me"] });
+      toast.show(`Réservation annulée — ${result.reservation.creditsSpent} crédits remboursés.`);
+    },
+    onError: (error) => {
+      toast.show(
+        error instanceof ApiError ? error.message : "Impossible d’annuler cette réservation.",
+        "error",
+      );
     },
   });
 
@@ -62,12 +73,21 @@ export default function ReservationDetailScreen() {
         capturedAt: coords.capturedAt,
       });
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       // A refused attempt is still a success response (201) — only an
       // accepted one flips `checkIn.state` to "done" server-side, so this
       // refetch is what lets the button disappear once it truly worked.
       queryClient.invalidateQueries({ queryKey: ["reservation", id] });
       queryClient.invalidateQueries({ queryKey: ["check-ins"] });
+      toast.show(
+        result.checkIn.accepted
+          ? "Arrivée validée !"
+          : `Arrivée non validée : ${checkInReasonLabel(result.checkIn.reason)}.`,
+        result.checkIn.accepted ? "success" : "error",
+      );
+    },
+    onError: (error) => {
+      toast.show(error instanceof ApiError ? error.message : "Impossible de valider l’arrivée.", "error");
     },
   });
 
@@ -112,6 +132,7 @@ export default function ReservationDetailScreen() {
                 : null
             }
             onCheckIn={() => checkInMutation.mutate()}
+            onScan={() => router.push({ pathname: "/scan-space", params: { reservationId: id } })}
           />
 
           <CancelSection
@@ -138,12 +159,14 @@ function ArrivalCard({
   result,
   errorMessage,
   onCheckIn,
+  onScan,
 }: {
   reservation: ReservationDto;
   isPending: boolean;
   result: { checkIn: CheckInDto } | null;
   errorMessage: string | null;
   onCheckIn: () => void;
+  onScan: () => void;
 }) {
   const colors = useColors();
   const state = reservation.checkIn.state;
@@ -156,7 +179,14 @@ function ArrivalCard({
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <Text style={[styles.cardTitle, { color: colors.ink }]}>Arrivée</Text>
+      <View style={styles.cardTitleRow}>
+        <Text style={[styles.cardTitle, { color: colors.ink }]}>Arrivée</Text>
+        {/* Neither a success nor a failure — the web's secondary accent for
+            a soft "not yet" state, not the plain gray/red used elsewhere. */}
+        {state === "too_early" || state === "expired" ? (
+          <StatusPill tone={colors.ochre} label={state === "too_early" ? "Trop tôt" : "Fenêtre expirée"} />
+        ) : null}
+      </View>
       <Text style={{ color: colors.inkMuted }}>{checkInLabel(state)}</Text>
       {showWindow ? (
         <Text style={{ color: colors.inkMuted }}>
@@ -179,19 +209,50 @@ function ArrivalCard({
           {errorMessage ? <Text style={{ color: colors.danger }}>{errorMessage}</Text> : null}
           <Pressable
             accessibilityRole="button"
-            onPress={onCheckIn}
+            onPress={onScan}
             disabled={isPending}
             style={({ pressed }) => [
               styles.confirmButton,
-              { backgroundColor: colors.accent, opacity: pressed || isPending ? 0.6 : 1 },
+              {
+                backgroundColor: colors.accent,
+                opacity: pressed || isPending ? 0.6 : 1,
+                transform: [{ scale: pressed && !isPending ? 0.97 : 1 }],
+              },
             ]}
           >
+            <Text style={{ color: colors.accentText, fontWeight: "700", fontSize: 16 }}>
+              Scanner le code de l’espace
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={onCheckIn}
+            disabled={isPending}
+            style={({ pressed }) => [styles.secondaryAction, { opacity: pressed || isPending ? 0.6 : 1 }]}
+          >
             {isPending ? (
-              <ActivityIndicator color={colors.accentText} />
+              <ActivityIndicator color={colors.accent} />
             ) : (
-              <Text style={{ color: colors.accentText, fontWeight: "700", fontSize: 16 }}>Je suis arrivé</Text>
+              <Text style={{ color: colors.accent, fontWeight: "600" }}>Valider sans scanner</Text>
             )}
           </Pressable>
+        </View>
+      ) : state === "too_early" ? (
+        // Scanning here only checks "is this the right room?" — it never
+        // touches the server or counts as an arrival. A reservation at midi
+        // scanned at 11h and left for lunch must still read "Trop tôt" at
+        // 11h05, not "Terminée" by the time the person actually shows up.
+        <View style={styles.cardAction}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={onScan}
+            style={({ pressed }) => [styles.verifyButton, { borderColor: colors.accent, opacity: pressed ? 0.7 : 1 }]}
+          >
+            <Text style={{ color: colors.accent, fontWeight: "600" }}>Vérifier l’espace par QR</Text>
+          </Pressable>
+          <Text style={{ color: colors.inkMuted, fontSize: 13 }}>
+            Confirme que c’est le bon espace, sans valider votre arrivée.
+          </Text>
         </View>
       ) : null}
     </View>
@@ -265,7 +326,8 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   content: { padding: 20, gap: 16 },
   card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 14, padding: 16, gap: 8 },
-  cardTitle: { fontSize: 15, fontWeight: "700" },
+  cardTitleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
+  cardTitle: { fontSize: 15, fontFamily: "Fraunces_500Medium" },
   cardAction: { gap: 8, marginTop: 4 },
   actionGroup: { gap: 8 },
   dangerButton: {
@@ -278,6 +340,14 @@ const styles = StyleSheet.create({
   confirmButton: {
     minHeight: 52,
     borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  secondaryAction: { minHeight: 44, alignItems: "center", justifyContent: "center" },
+  verifyButton: {
+    minHeight: 48,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     justifyContent: "center",
   },
