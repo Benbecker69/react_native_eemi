@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useColors } from "@/theme/colors";
 import { ScreenState } from "@/components/ScreenState";
 import { BookingSection } from "@/components/BookingSection";
+import { SpaceLocationMap } from "@/components/SpaceLocationMap";
 import { SpaceSkeleton } from "@/components/skeletons";
 import { ApiError } from "@/services/ApiError";
 import { useBookingForm } from "@/features/booking/useBookingForm";
@@ -45,6 +46,8 @@ export default function SpaceDetailScreen() {
             {formatCredits(availability.data.space.pricePerHour)} / heure ·{" "}
             {availability.data.space.capacity} place{availability.data.space.capacity === 1 ? "" : "s"}
           </Text>
+
+          <SpaceLocationMap location={availability.data.location} />
 
           <BookingSection form={form} />
         </ScrollView>

@@ -30,7 +30,7 @@ export type ForegroundLocation = {
   request: () => Promise<ForegroundLocationCoords | null>;
 };
 
-function permissionFromStatus(status: Location.PermissionStatus): LocationPermissionState {
+export function permissionFromStatus(status: Location.PermissionStatus): LocationPermissionState {
   if (status === Location.PermissionStatus.GRANTED) return "granted";
   if (status === Location.PermissionStatus.UNDETERMINED) return "undetermined";
   return "denied";

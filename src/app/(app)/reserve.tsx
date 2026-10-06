@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useColors } from "@/theme/colors";
 import { ScreenState } from "@/components/ScreenState";
 import { BookingSection } from "@/components/BookingSection";
+import { SpaceLocationMap } from "@/components/SpaceLocationMap";
 import { ProposalSkeleton } from "@/components/skeletons";
 import { ApiError } from "@/services/ApiError";
 import { listNearbySpaces } from "@/services/spacesService";
@@ -67,6 +68,8 @@ export default function ReserveProposalScreen() {
                 {formatDistance(proposal.distanceM)}
               </Text>
             </View>
+
+            <SpaceLocationMap location={proposal.location} />
 
             {form.availability.isError ? (
               <ScreenState

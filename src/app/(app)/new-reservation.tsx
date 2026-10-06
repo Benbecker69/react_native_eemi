@@ -2,12 +2,16 @@ import { useState } from "react";
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useColors } from "@/theme/colors";
+import { LocationsMap } from "@/components/LocationsMap";
 import { ScreenState } from "@/components/ScreenState";
+import { Skeleton } from "@/components/Skeleton";
+import { SpaceLocationMap } from "@/components/SpaceLocationMap";
 import { SearchBar } from "@/components/SearchBar";
 import { SpaceCard } from "@/components/SpaceCard";
 import { BookingSection } from "@/components/BookingSection";
 import { ListSkeleton } from "@/components/skeletons";
 import { ApiError } from "@/services/ApiError";
+import { filterByLocation, groupByLocation } from "@/features/spaces/map";
 import { filterSpaces } from "@/features/spaces/search";
 import { useSpaceBrowser } from "@/features/spaces/useSpaceBrowser";
 import { useBookingForm } from "@/features/booking/useBookingForm";
@@ -15,17 +19,20 @@ import { formatCredits } from "@/utils/format";
 import type { NearbySpace } from "@/types/api";
 
 // Modal reached from the round "+" on the Réserver tab: a form in two steps,
-// on one screen — 1. choose a space (searchable list), 2. choose day and
+// on one screen — 1. choose a space (searchable list, with a map of every
+// place: tapping a pin keeps only that place's spaces), 2. choose day and
 // hours. Spaces are listed alphabetically, without asking for the position:
 // this form is about what to book, not about what is close.
 export default function NewReservationScreen() {
   const colors = useColors();
   const [spaceId, setSpaceId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [locationId, setLocationId] = useState<string | null>(null);
   const query = useSpaceBrowser(null);
 
   const all = query.data?.items ?? [];
-  const items = filterSpaces(all, search);
+  const pins = groupByLocation(all);
+  const items = filterByLocation(filterSpaces(all, search), locationId);
   const chosen = spaceId ? (all.find((item) => item.space.id === spaceId) ?? null) : null;
 
   return (
@@ -44,6 +51,17 @@ export default function NewReservationScreen() {
             <View style={styles.header}>
               <Text style={[styles.step, { color: colors.ink }]}>1. Choisissez un espace</Text>
               <SearchBar value={search} onChangeText={setSearch} placeholder="Rechercher une salle" />
+              {/* Same height as the map, so nothing jumps when it arrives. */}
+              {query.isPending ? <Skeleton height={220} radius={14} /> : null}
+              {pins.length > 0 ? (
+                <LocationsMap
+                  pins={pins}
+                  selectedId={locationId}
+                  // Touching the chosen pin again lets go of the filter.
+                  onSelect={(id) => setLocationId((current) => (current === id ? null : id))}
+                  onClear={() => setLocationId(null)}
+                />
+              ) : null}
               {query.isPending ? <ListSkeleton /> : null}
               {query.isError ? (
                 <ScreenState
@@ -57,10 +75,21 @@ export default function NewReservationScreen() {
               {query.isSuccess && items.length === 0 ? (
                 <ScreenState
                   message={
-                    all.length === 0 ? "Aucun espace pour le moment." : `Aucun espace ne correspond à « ${search.trim()} ».`
+                    all.length === 0
+                      ? "Aucun espace pour le moment."
+                      : search.trim()
+                        ? `Aucun espace ne correspond à « ${search.trim()} ».`
+                        : "Aucun espace pour ce lieu."
                   }
-                  onRetry={all.length === 0 ? undefined : () => setSearch("")}
-                  retryLabel="Effacer la recherche"
+                  onRetry={
+                    all.length === 0
+                      ? undefined
+                      : () => {
+                          setSearch("");
+                          setLocationId(null);
+                        }
+                  }
+                  retryLabel="Effacer les filtres"
                 />
               ) : null}
             </View>
@@ -95,6 +124,8 @@ function ChosenSpaceForm({ item, onChange }: { item: NearbySpace; onChange: () =
           <Text style={{ color: colors.accent, fontWeight: "600" }}>Changer</Text>
         </Pressable>
       </View>
+
+      <SpaceLocationMap location={item.location} />
 
       {form.availability.isError ? (
         <ScreenState
