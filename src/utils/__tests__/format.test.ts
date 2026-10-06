@@ -6,6 +6,7 @@ import {
   formatDistance,
   formatHourRange,
   formatSlotLabel,
+  formatDayParts,
   formatTime,
   formatTimeRange,
   spaceTypeLabel,
@@ -111,5 +112,11 @@ describe("formatTime", () => {
 
   it("keeps the minutes when not on the hour", () => {
     expect(formatTime("2026-09-28T12:30:00.000Z")).toBe("14h30");
+  });
+});
+
+describe("formatDayParts", () => {
+  it("splits a date into the three lines of a calendar tile", () => {
+    expect(formatDayParts(new Date(2026, 8, 28))).toEqual({ weekday: "lun.", day: "28", month: "sept." });
   });
 });

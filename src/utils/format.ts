@@ -52,6 +52,18 @@ export function formatDayHeading(date: Date): string {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+const weekdayShortFormatter = new Intl.DateTimeFormat("fr-FR", { weekday: "short" });
+const monthShortFormatter = new Intl.DateTimeFormat("fr-FR", { month: "short" });
+
+/** The three lines of a small calendar tile: "lun.", "28", "sept.". */
+export function formatDayParts(date: Date): { weekday: string; day: string; month: string } {
+  return {
+    weekday: weekdayShortFormatter.format(date),
+    day: String(date.getDate()),
+    month: monthShortFormatter.format(date),
+  };
+}
+
 /** A booking as shown on the booking screens ("lun. 28 sept., 14h–17h · 3 h"). */
 export function formatSlotLabel(day: Date, startHour: number, endHour: number): string {
   return `${dayFormatter.format(day)}, ${startHour}h–${endHour}h · ${endHour - startHour} h`;

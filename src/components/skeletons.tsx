@@ -60,6 +60,54 @@ export function ProfileSkeleton() {
   );
 }
 
+/** Home tab: the featured reservation, the three shortcuts, then the activity sheet. */
+export function HomeSkeleton() {
+  return (
+    <LoadingGroup style={styles.home}>
+      <Skeleton height={148} radius={16} />
+      <View style={styles.homeActions}>
+        {Array.from({ length: 3 }, (_, index) => (
+          <View key={index} style={styles.homeAction}>
+            <Skeleton width={52} height={52} radius={26} />
+            <Skeleton height={13} width="70%" />
+          </View>
+        ))}
+      </View>
+      <View style={styles.stack}>
+        <Skeleton height={20} width="38%" />
+        <Card>
+          <Skeleton height={13} width="18%" />
+          <Skeleton height={44} width="42%" />
+          <View style={[styles.homeFigures, styles.gapTop]}>
+            <View style={styles.rowText}>
+              <Skeleton height={13} width="60%" />
+              <Skeleton height={28} width="40%" />
+              <Skeleton height={12} width="75%" />
+            </View>
+            <View style={styles.rowText}>
+              <Skeleton height={13} width="70%" />
+              <Skeleton height={28} width="45%" />
+              <Skeleton height={12} width="80%" />
+            </View>
+          </View>
+          <View style={[styles.homeFigures, styles.gapTop]}>
+            <View style={styles.rowText}>
+              <Skeleton height={13} width="70%" />
+              <Skeleton height={28} width="35%" />
+              <Skeleton height={12} width="80%" />
+            </View>
+            <View style={styles.rowText}>
+              <Skeleton height={13} width="50%" />
+              <Skeleton height={28} width="45%" />
+              <Skeleton height={12} width="75%" />
+            </View>
+          </View>
+        </Card>
+      </View>
+    </LoadingGroup>
+  );
+}
+
 /** Reservation detail: summary card, then the action button. */
 export function DetailSkeleton() {
   return (
@@ -150,4 +198,8 @@ const styles = StyleSheet.create({
   gapTop: { marginTop: 8 },
   hourGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   formBlock: { gap: 10 },
+  home: { gap: 28 },
+  homeActions: { flexDirection: "row", gap: 8 },
+  homeAction: { flex: 1, alignItems: "center", gap: 8, paddingVertical: 4 },
+  homeFigures: { flexDirection: "row", gap: 16 },
 });

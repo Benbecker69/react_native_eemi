@@ -17,6 +17,13 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: "Accueil",
+          tabBarIcon: ({ color, size }) => <SymbolView name="house.fill" tintColor={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="book"
+        options={{
           title: "Réserver",
           tabBarIcon: ({ color, size }) => (
             <SymbolView name="calendar.badge.plus" tintColor={color} size={size} />

@@ -105,6 +105,17 @@ export type NearbyResult = {
   items: NearbySpace[];
 };
 
+// Figures of the home screen, computed by the server (`GET /me/summary`).
+export type MemberSummary = {
+  /** Length of the rolling window `recent` covers, in days. */
+  windowDays: number;
+  upcoming: { count: number };
+  recent: { reservations: number; hours: number; creditsSpent: number };
+  /** Finished bookings, and how many of them had a validated arrival. */
+  attendance: { past: number; attended: number };
+  favoriteLocation: { id: string; name: string; city: string; visits: number } | null;
+};
+
 export type AuthResult = { token: string; expiresAt: string; user: MeUser };
 
 export type BusySlot = { startAt: string; endAt: string };

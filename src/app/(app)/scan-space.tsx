@@ -75,6 +75,9 @@ export default function ScanSpaceScreen() {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["reservation", reservationId] });
       queryClient.invalidateQueries({ queryKey: ["check-ins"] });
+      queryClient.invalidateQueries({ queryKey: ["me", "summary"] });
+      // Lists show "Arrivée disponible" from the same reservation.
+      queryClient.invalidateQueries({ queryKey: ["reservations"] });
       toast.show(
         result.checkIn.accepted
           ? "Arrivée validée !"

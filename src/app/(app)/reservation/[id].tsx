@@ -79,6 +79,10 @@ export default function ReservationDetailScreen() {
       // refetch is what lets the button disappear once it truly worked.
       queryClient.invalidateQueries({ queryKey: ["reservation", id] });
       queryClient.invalidateQueries({ queryKey: ["check-ins"] });
+      // The home screen's presence rate counts validated arrivals.
+      queryClient.invalidateQueries({ queryKey: ["me", "summary"] });
+      // Lists show "Arrivée disponible" from the same reservation.
+      queryClient.invalidateQueries({ queryKey: ["reservations"] });
       toast.show(
         result.checkIn.accepted
           ? "Arrivée validée !"

@@ -3,14 +3,19 @@ import { useColors } from "@/theme/colors";
 import { formatCreditsSpent, formatDayHeading, formatHourRange } from "@/utils/format";
 import type { ReservationDto } from "@/types/api";
 
-type ReservationHeroProps = { item: ReservationDto; onPress: () => void };
+type ReservationHeroProps = {
+  item: ReservationDto;
+  onPress: () => void;
+  /** Short note shown opposite the eyebrow — the home screen passes "Dans 2 h". */
+  caption?: string;
+};
 
 // The next confirmed reservation, featured above the day-grouped list — only
 // shown for the "À venir" scope, the only one whose ascending order
 // guarantees this really is the nearest one. Same accent-filled language as
 // the "Réserver près de moi" card on the Espaces pane, so the two primary
 // cards of this screen read as one family rather than two different styles.
-export function ReservationHero({ item, onPress }: ReservationHeroProps) {
+export function ReservationHero({ item, onPress, caption }: ReservationHeroProps) {
   const colors = useColors();
   const canCheckIn = item.checkIn.state === "available";
 
@@ -21,7 +26,12 @@ export function ReservationHero({ item, onPress }: ReservationHeroProps) {
       onPress={onPress}
       style={({ pressed }) => [styles.card, { backgroundColor: colors.accent, opacity: pressed ? 0.9 : 1 }]}
     >
-      <Text style={[styles.eyebrow, { color: colors.accentText }]}>Prochaine réservation</Text>
+      <View style={styles.topRow}>
+        <Text style={[styles.eyebrow, { color: colors.accentText }]}>Prochaine réservation</Text>
+        {caption ? (
+          <Text style={[styles.eyebrow, { color: colors.accentText }]}>{caption}</Text>
+        ) : null}
+      </View>
       <Text style={[styles.day, { color: colors.accentText }]}>{formatDayHeading(new Date(item.startAt))}</Text>
       <Text style={[styles.hours, { color: colors.accentText }]}>{formatHourRange(item.startAt, item.endAt)}</Text>
       <Text style={{ color: colors.accentText, opacity: 0.9 }} numberOfLines={1}>
@@ -44,6 +54,7 @@ export function ReservationHero({ item, onPress }: ReservationHeroProps) {
 
 const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: 18, gap: 4 },
+  topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   eyebrow: { fontSize: 13, fontWeight: "600", opacity: 0.85 },
   day: { fontSize: 17, fontFamily: "Fraunces_500Medium", marginTop: 2 },
   hours: { fontSize: 26, fontFamily: "Fraunces_600SemiBold" },
