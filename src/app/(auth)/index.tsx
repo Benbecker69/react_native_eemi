@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -11,9 +12,14 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SymbolView } from "expo-symbols";
 import { useAuth } from "@/features/auth/AuthContext";
 import { ApiError } from "@/services/ApiError";
 import { useColors } from "@/theme/colors";
+import { useToast } from "@/features/feedback/ToastContext";
+import { Logo } from "@/components/Logo";
+import { PasswordField } from "@/components/PasswordField";
+import { RevealOnMount } from "@/components/RevealOnMount";
 
 // Mirrors the web app's /connexion copy and its demo quick-fill pattern (see
 // docs/base-de-donnees.md there) — continuity with the web, see CLAUDE.md
@@ -24,6 +30,7 @@ const DEMO_ACCOUNT = { email: "camille@example.com", password: "demo1234" };
 export default function LoginScreen() {
   const colors = useColors();
   const { login } = useAuth();
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -38,9 +45,15 @@ export default function LoginScreen() {
     try {
       await login({ email: email.trim(), password });
       // No navigation call needed: RootNavigator's Stack.Protected reacts to
-      // the auth state change and swaps in the (app) group by itself.
+      // the auth state change and swaps in the (app) group by itself — the
+      // toast still shows, now on top of the dashboard it just swapped to.
+      toast.show("Connexion réussie.");
     } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : "Une erreur est survenue.");
+      // Kept inline too, not just a toast: a wrong-password message needs
+      // more than 3 seconds to read and act on.
+      const message = caught instanceof ApiError ? caught.message : "Une erreur est survenue.";
+      setError(message);
+      toast.show(message, "error");
     } finally {
       setSubmitting(false);
     }
@@ -48,93 +61,82 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.flex}
-      >
-        <ScrollView
-          contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Text style={[styles.brand, { color: colors.ink }]}>Repère</Text>
-          <Text style={[styles.title, { color: colors.ink }]}>Connexion</Text>
-          <Text style={[styles.subtitle, { color: colors.inkMuted }]}>
-            Accédez à votre espace Repère.
-          </Text>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <RevealOnMount>
+            <View style={styles.hero}>
+              <Logo size={34} textSize={28} />
+              <Text style={[styles.tagline, { color: colors.inkMuted }]}>
+                Votre espace de coworking, où que vous soyez.
+              </Text>
+            </View>
+          </RevealOnMount>
 
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => {
-              setEmail(DEMO_ACCOUNT.email);
-              setPassword(DEMO_ACCOUNT.password);
-              setError(null);
-            }}
-            style={({ pressed }) => [
-              styles.demoButton,
-              { borderColor: colors.border, opacity: pressed ? 0.6 : 1 },
-            ]}
-          >
-            <Text style={{ color: colors.ink }}>Compte de démonstration</Text>
-          </Pressable>
+          <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.title, { color: colors.ink }]}>Connexion</Text>
 
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.ink }]}>E-mail</Text>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="vous@exemple.com"
-              placeholderTextColor={colors.inkMuted}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="email"
-              textContentType="emailAddress"
-              accessibilityLabel="Adresse e-mail"
-              style={[
-                styles.input,
-                { borderColor: colors.border, color: colors.ink, backgroundColor: colors.surface },
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                setEmail(DEMO_ACCOUNT.email);
+                setPassword(DEMO_ACCOUNT.password);
+                setError(null);
+              }}
+              style={({ pressed }) => [
+                styles.demoButton,
+                { borderColor: colors.accent, opacity: pressed ? 0.7 : 1 },
               ]}
-            />
-          </View>
+            >
+              <SymbolView name="sparkles" tintColor={colors.accent} size={16} />
+              <Text style={{ color: colors.accent, fontWeight: "600" }}>Compte de démonstration</Text>
+            </Pressable>
 
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.ink }]}>Mot de passe</Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="••••••••"
-              placeholderTextColor={colors.inkMuted}
-              secureTextEntry
-              autoComplete="password"
-              textContentType="password"
-              accessibilityLabel="Mot de passe"
-              style={[
-                styles.input,
-                { borderColor: colors.border, color: colors.ink, backgroundColor: colors.surface },
+            <View style={styles.field}>
+              <Text style={{ color: colors.inkMuted }}>E-mail</Text>
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder="vous@exemple.com"
+                placeholderTextColor={colors.inkMuted}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="email"
+                textContentType="emailAddress"
+                accessibilityLabel="Adresse e-mail"
+                style={[styles.input, { borderColor: colors.border, color: colors.ink, backgroundColor: colors.background }]}
+              />
+            </View>
+
+            <PasswordField label="Mot de passe" value={password} onChangeText={setPassword} />
+
+            {error ? (
+              <Text style={[styles.error, { color: colors.danger }]} accessibilityRole="alert">
+                {error}
+              </Text>
+            ) : null}
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ disabled: !canSubmit }}
+              disabled={!canSubmit}
+              onPress={handleSubmit}
+              style={({ pressed }) => [
+                styles.submit,
+                {
+                  backgroundColor: colors.accent,
+                  opacity: !canSubmit ? 0.5 : pressed ? 0.85 : 1,
+                  transform: [{ scale: pressed && canSubmit ? 0.97 : 1 }],
+                },
               ]}
-            />
+            >
+              {submitting ? (
+                <ActivityIndicator color={colors.accentText} />
+              ) : (
+                <Text style={[styles.submitText, { color: colors.accentText }]}>Se connecter</Text>
+              )}
+            </Pressable>
           </View>
-
-          {error ? (
-            <Text style={[styles.error, { color: colors.danger }]} accessibilityRole="alert">
-              {error}
-            </Text>
-          ) : null}
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ disabled: !canSubmit }}
-            disabled={!canSubmit}
-            onPress={handleSubmit}
-            style={({ pressed }) => [
-              styles.submit,
-              { backgroundColor: colors.accent, opacity: !canSubmit ? 0.5 : pressed ? 0.85 : 1 },
-            ]}
-          >
-            <Text style={[styles.submitText, { color: colors.accentText }]}>
-              {submitting ? "Connexion…" : "Se connecter"}
-            </Text>
-          </Pressable>
 
           <View style={styles.footer}>
             <Text style={{ color: colors.inkMuted }}>Pas encore de compte ?</Text>
@@ -151,40 +153,39 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   flex: { flex: 1 },
-  content: { padding: 24, gap: 4, flexGrow: 1, justifyContent: "center" },
-  brand: { fontSize: 20, fontWeight: "600", marginBottom: 24 },
-  title: { fontSize: 28, fontWeight: "700" },
-  subtitle: { fontSize: 15, marginTop: 4, marginBottom: 20 },
+  content: { padding: 24, flexGrow: 1, justifyContent: "center", gap: 28 },
+  hero: { alignItems: "center", gap: 8 },
+  tagline: { fontSize: 15, textAlign: "center" },
+  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 20, padding: 20, gap: 16 },
+  title: { fontSize: 22, fontFamily: "Fraunces_500Medium" },
   demoButton: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignSelf: "flex-start",
     alignItems: "center",
-    marginBottom: 24,
-    minHeight: 44,
-    justifyContent: "center",
+    gap: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    minHeight: 36,
   },
-  field: { marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: "600", marginBottom: 6 },
+  field: { gap: 8 },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: 14,
-    paddingVertical: 12,
     fontSize: 16,
-    minHeight: 44,
+    minHeight: 48,
   },
-  error: { fontSize: 14, marginTop: 4, marginBottom: 8 },
+  error: { fontSize: 14 },
   submit: {
-    marginTop: 8,
-    borderRadius: 10,
-    paddingVertical: 14,
+    marginTop: 4,
+    borderRadius: 12,
+    minHeight: 52,
     alignItems: "center",
-    minHeight: 44,
     justifyContent: "center",
   },
-  submitText: { fontSize: 16, fontWeight: "600" },
-  footer: { flexDirection: "row", justifyContent: "center", gap: 6, marginTop: 24 },
+  submitText: { fontSize: 16, fontWeight: "700" },
+  footer: { flexDirection: "row", justifyContent: "center", gap: 6 },
   link: { fontWeight: "600" },
 });

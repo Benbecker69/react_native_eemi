@@ -15,7 +15,9 @@ export function FloatingActionButton({ onPress, accessibilityLabel }: FloatingAc
       onPress={onPress}
       style={({ pressed }) => [
         styles.fab,
-        { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1 },
+        // Matches the web's own primary-button press feedback
+        // (`active:scale-[0.97]` in globals.css), not just an opacity dim.
+        { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
       ]}
     >
       <SymbolView name="plus" tintColor={colors.accentText} size={26} weight="semibold" />

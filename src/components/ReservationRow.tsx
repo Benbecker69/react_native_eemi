@@ -50,6 +50,6 @@ const styles = StyleSheet.create({
   },
   text: { flex: 1, gap: 6 },
   topLine: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
-  hours: { fontSize: 16, fontWeight: "700" },
+  hours: { fontSize: 16, fontFamily: "Fraunces_500Medium" },
   credits: { fontSize: 13, fontWeight: "700" },
 });

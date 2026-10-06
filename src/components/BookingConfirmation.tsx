@@ -53,7 +53,11 @@ export function BookingConfirmation({
         disabled={disabled}
         style={({ pressed }) => [
           styles.confirmButton,
-          { backgroundColor: colors.accent, opacity: pressed || disabled ? 0.6 : 1 },
+          {
+            backgroundColor: colors.accent,
+            opacity: pressed || disabled ? 0.6 : 1,
+            transform: [{ scale: pressed && !disabled ? 0.97 : 1 }],
+          },
         ]}
       >
         {isPending ? (
@@ -88,7 +92,7 @@ function Row({
 
 const styles = StyleSheet.create({
   card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 12, padding: 16, gap: 12 },
-  slot: { fontSize: 16, fontWeight: "700" },
+  slot: { fontSize: 16, fontFamily: "Fraunces_500Medium" },
   rows: { gap: 6 },
   row: { flexDirection: "row", justifyContent: "space-between", gap: 12 },
   confirmButton: {

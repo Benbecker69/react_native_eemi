@@ -13,6 +13,7 @@ import { ApiError } from "@/services/ApiError";
 import type { ReservationsScope } from "@/services/reservationsService";
 import { useReservationsList } from "@/features/reservations/useReservationsList";
 import { groupReservationsByDay } from "@/features/reservations/grouping";
+import { useManualRefresh } from "@/features/feedback/useManualRefresh";
 import type { ReservationDto } from "@/types/api";
 
 const SCOPES: { value: ReservationsScope; label: string }[] = [
@@ -31,6 +32,7 @@ export function ReservationsPane({ onBrowseSpaces }: { onBrowseSpaces: () => voi
   const router = useRouter();
   const [scope, setScope] = useState<ReservationsScope>("upcoming");
   const { query, items } = useReservationsList(scope);
+  const { refreshing, onRefresh } = useManualRefresh(() => query.refetch());
   const now = new Date();
 
   const hero = scope === "upcoming" ? (items[0] ?? null) : null;
@@ -84,8 +86,8 @@ export function ReservationsPane({ onBrowseSpaces }: { onBrowseSpaces: () => voi
         if (query.hasNextPage && !query.isFetchingNextPage) query.fetchNextPage();
       }}
       ListFooterComponent={query.isFetchingNextPage ? <ListSkeleton count={1} /> : null}
-      refreshing={query.isRefetching && !query.isFetchingNextPage}
-      onRefresh={() => query.refetch()}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
     />
   );
 }
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
   // Same size/weight as a `SlotPicker` section title ("Jour", "Début"…): one
   // consistent heading style for "a label above a group of things" app-wide.
   sectionHeader: { paddingVertical: 8 },
-  sectionTitle: { fontSize: 15, fontWeight: "700" },
+  sectionTitle: { fontSize: 15, fontFamily: "Fraunces_500Medium" },
   empty: { alignItems: "center", paddingVertical: 28, paddingHorizontal: 16, gap: 6 },
   emptyIcon: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", marginBottom: 6 },
   emptyTitle: { fontSize: 17, fontWeight: "700", textAlign: "center" },

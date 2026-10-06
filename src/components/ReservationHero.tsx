@@ -45,8 +45,8 @@ export function ReservationHero({ item, onPress }: ReservationHeroProps) {
 const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: 18, gap: 4 },
   eyebrow: { fontSize: 13, fontWeight: "600", opacity: 0.85 },
-  day: { fontSize: 17, fontWeight: "700", marginTop: 2 },
-  hours: { fontSize: 26, fontWeight: "700" },
+  day: { fontSize: 17, fontFamily: "Fraunces_500Medium", marginTop: 2 },
+  hours: { fontSize: 26, fontFamily: "Fraunces_600SemiBold" },
   bottomRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 8 },
   pill: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 },
 });

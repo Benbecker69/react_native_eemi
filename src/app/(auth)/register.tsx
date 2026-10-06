@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,10 +15,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/features/auth/AuthContext";
 import { ApiError } from "@/services/ApiError";
 import { useColors } from "@/theme/colors";
+import { useToast } from "@/features/feedback/ToastContext";
+import { Logo } from "@/components/Logo";
+import { PasswordField } from "@/components/PasswordField";
 
 export default function RegisterScreen() {
   const colors = useColors();
   const { register } = useAuth();
+  const toast = useToast();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,8 +38,11 @@ export default function RegisterScreen() {
     setError(null);
     try {
       await register({ name: name.trim(), email: email.trim(), password });
+      toast.show("Compte créé, bienvenue !");
     } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : "Une erreur est survenue.");
+      const message = caught instanceof ApiError ? caught.message : "Une erreur est survenue.";
+      setError(message);
+      toast.show(message, "error");
     } finally {
       setSubmitting(false);
     }
@@ -42,14 +50,8 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.flex}
-      >
-        <ScrollView
-          contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled"
-        >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <Pressable
             accessibilityRole="button"
             onPress={() => router.back()}
@@ -57,86 +59,83 @@ export default function RegisterScreen() {
           >
             <Text style={[styles.back, { color: colors.accent }]}>← Connexion</Text>
           </Pressable>
-          <Text style={[styles.title, { color: colors.ink }]}>Créer un compte</Text>
-          <Text style={[styles.subtitle, { color: colors.inkMuted }]}>
-            20 crédits de bienvenue à l’inscription.
-          </Text>
 
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.ink }]}>Nom</Text>
-            <TextInput
-              value={name}
-              onChangeText={setName}
-              placeholder="Votre nom"
-              placeholderTextColor={colors.inkMuted}
-              autoComplete="name"
-              textContentType="name"
-              accessibilityLabel="Nom"
-              style={[
-                styles.input,
-                { borderColor: colors.border, color: colors.ink, backgroundColor: colors.surface },
-              ]}
-            />
+          <View style={styles.hero}>
+            <Logo size={30} textSize={24} />
           </View>
 
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.ink }]}>E-mail</Text>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="vous@exemple.com"
-              placeholderTextColor={colors.inkMuted}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="email"
-              textContentType="emailAddress"
-              accessibilityLabel="Adresse e-mail"
-              style={[
-                styles.input,
-                { borderColor: colors.border, color: colors.ink, backgroundColor: colors.surface },
-              ]}
-            />
-          </View>
+          <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.title, { color: colors.ink }]}>Créer un compte</Text>
+            <Text style={[styles.subtitle, { color: colors.inkMuted }]}>
+              20 crédits de bienvenue à l’inscription.
+            </Text>
 
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.ink }]}>Mot de passe</Text>
-            <TextInput
+            <View style={styles.field}>
+              <Text style={{ color: colors.inkMuted }}>Nom</Text>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                placeholder="Votre nom"
+                placeholderTextColor={colors.inkMuted}
+                autoComplete="name"
+                textContentType="name"
+                accessibilityLabel="Nom"
+                style={[styles.input, { borderColor: colors.border, color: colors.ink, backgroundColor: colors.background }]}
+              />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={{ color: colors.inkMuted }}>E-mail</Text>
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder="vous@exemple.com"
+                placeholderTextColor={colors.inkMuted}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="email"
+                textContentType="emailAddress"
+                accessibilityLabel="Adresse e-mail"
+                style={[styles.input, { borderColor: colors.border, color: colors.ink, backgroundColor: colors.background }]}
+              />
+            </View>
+
+            <PasswordField
+              label="Mot de passe"
               value={password}
               onChangeText={setPassword}
               placeholder="8 caractères minimum"
-              placeholderTextColor={colors.inkMuted}
-              secureTextEntry
-              autoComplete="password-new"
-              textContentType="newPassword"
-              accessibilityLabel="Mot de passe"
-              style={[
-                styles.input,
-                { borderColor: colors.border, color: colors.ink, backgroundColor: colors.surface },
-              ]}
+              autoComplete="new-password"
             />
+
+            {error ? (
+              <Text style={[styles.error, { color: colors.danger }]} accessibilityRole="alert">
+                {error}
+              </Text>
+            ) : null}
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ disabled: !canSubmit }}
+              disabled={!canSubmit}
+              onPress={handleSubmit}
+              style={({ pressed }) => [
+                styles.submit,
+                {
+                  backgroundColor: colors.accent,
+                  opacity: !canSubmit ? 0.5 : pressed ? 0.85 : 1,
+                  transform: [{ scale: pressed && canSubmit ? 0.97 : 1 }],
+                },
+              ]}
+            >
+              {submitting ? (
+                <ActivityIndicator color={colors.accentText} />
+              ) : (
+                <Text style={[styles.submitText, { color: colors.accentText }]}>Créer mon compte</Text>
+              )}
+            </Pressable>
           </View>
-
-          {error ? (
-            <Text style={[styles.error, { color: colors.danger }]} accessibilityRole="alert">
-              {error}
-            </Text>
-          ) : null}
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ disabled: !canSubmit }}
-            disabled={!canSubmit}
-            onPress={handleSubmit}
-            style={({ pressed }) => [
-              styles.submit,
-              { backgroundColor: colors.accent, opacity: !canSubmit ? 0.5 : pressed ? 0.85 : 1 },
-            ]}
-          >
-            <Text style={[styles.submitText, { color: colors.accentText }]}>
-              {submitting ? "Création…" : "Créer mon compte"}
-            </Text>
-          </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -146,29 +145,28 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   flex: { flex: 1 },
-  content: { padding: 24, gap: 4, flexGrow: 1, justifyContent: "center" },
-  backButton: { minHeight: 44, justifyContent: "center", marginBottom: 12, alignSelf: "flex-start" },
+  content: { padding: 24, flexGrow: 1, justifyContent: "center", gap: 20 },
+  backButton: { minHeight: 44, justifyContent: "center", alignSelf: "flex-start" },
   back: { fontSize: 15, fontWeight: "600" },
-  title: { fontSize: 28, fontWeight: "700" },
-  subtitle: { fontSize: 15, marginTop: 4, marginBottom: 20 },
-  field: { marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: "600", marginBottom: 6 },
+  hero: { alignItems: "center" },
+  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 20, padding: 20, gap: 16 },
+  title: { fontSize: 22, fontFamily: "Fraunces_500Medium" },
+  subtitle: { fontSize: 14, marginTop: -8 },
+  field: { gap: 8 },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: 14,
-    paddingVertical: 12,
     fontSize: 16,
-    minHeight: 44,
+    minHeight: 48,
   },
-  error: { fontSize: 14, marginTop: 4, marginBottom: 8 },
+  error: { fontSize: 14 },
   submit: {
-    marginTop: 8,
-    borderRadius: 10,
-    paddingVertical: 14,
+    marginTop: 4,
+    borderRadius: 12,
+    minHeight: 52,
     alignItems: "center",
-    minHeight: 44,
     justifyContent: "center",
   },
-  submitText: { fontSize: 16, fontWeight: "600" },
+  submitText: { fontSize: 16, fontWeight: "700" },
 });

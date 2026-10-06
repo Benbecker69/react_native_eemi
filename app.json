@@ -39,7 +39,22 @@
         {
           "locationWhenInUsePermission": "Repère utilise votre position pour trouver les espaces les plus proches et confirmer votre arrivée."
         }
-      ]
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Repère utilise Face ID pour protéger l'accès à vos paramètres de sécurité."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Repère utilise l'appareil photo pour scanner le code d'un espace et confirmer votre arrivée.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

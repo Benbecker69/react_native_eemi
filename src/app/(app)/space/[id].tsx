@@ -56,6 +56,6 @@ export default function SpaceDetailScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   content: { padding: 24, gap: 16 },
-  title: { fontSize: 22, fontWeight: "700" },
+  title: { fontSize: 22, fontFamily: "Fraunces_500Medium" },
   price: { fontWeight: "700", marginTop: 2 },
 });

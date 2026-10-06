@@ -11,7 +11,9 @@ type SpaceCardProps = { item: NearbySpace; onPress: () => void };
 export function SpaceCard({ item, onPress }: SpaceCardProps) {
   const colors = useColors();
   const { space, location } = item;
-  const tone = item.busy ? colors.inkMuted : colors.accent;
+  // Busy reads as a soft warning, not a neutral/negative one — the web's own
+  // secondary accent (`--ochre`, "alerte/places limitées") rather than gray.
+  const tone = item.busy ? colors.ochre : colors.accent;
 
   return (
     <Pressable
@@ -48,7 +50,7 @@ export function SpaceCard({ item, onPress }: SpaceCardProps) {
 const styles = StyleSheet.create({
   card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 14, padding: 16, gap: 6 },
   topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
-  name: { flex: 1, fontSize: 17, fontWeight: "700" },
+  name: { flex: 1, fontSize: 17, fontFamily: "Fraunces_500Medium" },
   bottomRow: {
     flexDirection: "row",
     alignItems: "center",

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useColors } from "@/theme/colors";
+import { PageHeader } from "@/components/PageHeader";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { SearchBar } from "@/components/SearchBar";
 import { SpacesPane } from "@/components/SpacesPane";
@@ -34,7 +35,7 @@ export default function BookTabScreen() {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.ink }]}>Réserver</Text>
+        <PageHeader title="Réserver" description="Trouvez un espace disponible et réservez en quelques secondes." />
         <SegmentedControl
           options={MODES}
           value={mode}
@@ -63,5 +64,4 @@ export default function BookTabScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   header: { paddingHorizontal: 16, paddingTop: 8, gap: 12 },
-  title: { fontSize: 28, fontWeight: "700" },
 });

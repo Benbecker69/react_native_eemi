@@ -92,6 +92,6 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   content: { padding: 24, gap: 16 },
   card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 12, padding: 16, gap: 6 },
-  spaceName: { fontSize: 20, fontWeight: "700" },
+  spaceName: { fontSize: 20, fontFamily: "Fraunces_500Medium" },
   distance: { fontWeight: "700", marginTop: 4 },
 });

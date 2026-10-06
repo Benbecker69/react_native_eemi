@@ -4,6 +4,7 @@ import { ApiError } from "@/services/ApiError";
 import { getSpaceAvailability } from "@/services/spacesService";
 import { createReservation } from "@/services/reservationsService";
 import { me } from "@/services/authService";
+import { useToast } from "@/features/feedback/ToastContext";
 import { formatSlotLabel } from "@/utils/format";
 import { dayKey } from "./calendar";
 import {
@@ -30,6 +31,7 @@ import { useBookingDate, useHourRange } from "./useBookingSelection";
 export function useBookingForm(spaceId: string | undefined, options: { preselect: boolean }) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { date, selectDate } = useBookingDate();
 
   const availability = useQuery({
@@ -77,9 +79,19 @@ export function useBookingForm(spaceId: string | undefined, options: { preselect
       queryClient.invalidateQueries({ queryKey: ["nearby-proposal"] });
       queryClient.invalidateQueries({ queryKey: ["space-availability"] });
       router.replace(`/reservation/${result.reservation.id}`);
+      // Fired after the navigation call, not before: still shows fine (the
+      // host is mounted above the stack, see `ToastHost`), now on top of the
+      // reservation detail screen it just replaced the booking form with.
+      toast.show("Réservation confirmée !");
     },
-    // "Ce créneau vient d'être réservé" → refresh the grid so it greys out.
-    onError: () => queryClient.invalidateQueries({ queryKey: ["space-availability"] }),
+    onError: (error) => {
+      // "Ce créneau vient d'être réservé" → refresh the grid so it greys out.
+      queryClient.invalidateQueries({ queryKey: ["space-availability"] });
+      toast.show(
+        error instanceof ApiError ? error.message : "Impossible de créer la réservation.",
+        "error",
+      );
+    },
   });
 
   return {

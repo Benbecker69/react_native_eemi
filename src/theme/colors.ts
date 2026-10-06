@@ -1,30 +1,37 @@
 import { useColorScheme } from "react-native";
 
-// Light continuity with the web app's own palette (its `layout.tsx`: paper
-// `#ededea` / dark `#14171a`, a dark-green CTA) — see CLAUDE.md "Identité".
-// System typography and native iOS components otherwise; this file only
-// owns color, so no hex is hardcoded in a screen.
+// The real palette of the web app's `src/app/globals.css` (its `:root` /
+// `@media (prefers-color-scheme: dark)` tokens, --ink/--pine/--ochre/...),
+// read directly from source rather than carried over from an early
+// "continuity" guess — the web's own palette drifted during its "premium"
+// design pass (see its CLAUDE.md "Limites techniques connues"), and this
+// file hadn't followed. `ochre` is the web's secondary accent
+// ("alerte/places limitées" — busy/warning states), not used here before.
 const palette = {
   light: {
     background: "#ededea",
     surface: "#ffffff",
-    ink: "#14171a",
-    inkMuted: "#6b6f76",
-    accent: "#2d5744",
-    accentText: "#ffffff",
-    border: "#d8d6d0",
-    danger: "#b3261e",
+    ink: "#171b1f",
+    inkMuted: "#5b6168",
+    accent: "#24534a",
+    accentText: "#f4f6f5",
+    ochre: "#8f5a26",
+    ochreText: "#fdf8f1",
+    border: "#d8d4c9",
+    danger: "#a3372a",
     skeleton: "#dcdad4",
   },
   dark: {
     background: "#14171a",
-    surface: "#1d2125",
-    ink: "#ededea",
+    surface: "#1d211f",
+    ink: "#edeeea",
     inkMuted: "#9aa0a6",
-    accent: "#7fb69a",
-    accentText: "#0b1210",
-    border: "#2c3136",
-    danger: "#ff6b60",
+    accent: "#4c9c8b",
+    accentText: "#0e1a17",
+    ochre: "#d69a57",
+    ochreText: "#241505",
+    border: "#2c322f",
+    danger: "#e07a68",
     skeleton: "#2a3035",
   },
 } as const;
@@ -36,6 +43,9 @@ export type Colors = {
   inkMuted: string;
   accent: string;
   accentText: string;
+  /** Secondary accent (web's `--ochre`) — busy/warning states, used sparingly. */
+  ochre: string;
+  ochreText: string;
   border: string;
   danger: string;
   /** Placeholder blocks shown while data loads. */

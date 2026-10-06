@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   list: { padding: 16, gap: 12 },
   header: { gap: 12 },
   form: { padding: 24, gap: 16 },
-  step: { fontSize: 20, fontWeight: "700" },
+  step: { fontSize: 20, fontFamily: "Fraunces_500Medium" },
   chosen: {
     flexDirection: "row",
     alignItems: "center",

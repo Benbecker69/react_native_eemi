@@ -8,6 +8,7 @@ import { ListSkeleton } from "@/components/skeletons";
 import { ApiError } from "@/services/ApiError";
 import { filterSpaces } from "@/features/spaces/search";
 import { useSpaceBrowser } from "@/features/spaces/useSpaceBrowser";
+import { useManualRefresh } from "@/features/feedback/useManualRefresh";
 import type { ForegroundLocation } from "@/features/location/useForegroundLocation";
 
 type SpacesPaneProps = {
@@ -23,6 +24,7 @@ type SpacesPaneProps = {
 export function SpacesPane({ location, search, onClearSearch }: SpacesPaneProps) {
   const router = useRouter();
   const query = useSpaceBrowser(location.coords);
+  const { refreshing, onRefresh } = useManualRefresh(() => query.refetch());
 
   const all = query.data?.items ?? [];
   const items = filterSpaces(all, search);
@@ -82,8 +84,8 @@ export function SpacesPane({ location, search, onClearSearch }: SpacesPaneProps)
           onPress={() => router.push({ pathname: "/space/[id]", params: { id: item.space.id } })}
         />
       )}
-      refreshing={query.isFetching && !query.isPending}
-      onRefresh={() => query.refetch()}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
     />
   );
 }

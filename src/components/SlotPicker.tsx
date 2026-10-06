@@ -127,7 +127,7 @@ function HourGrid({
 const styles = StyleSheet.create({
   container: { gap: 20 },
   section: { gap: 10 },
-  sectionTitle: { fontSize: 15, fontWeight: "700" },
+  sectionTitle: { fontSize: 15, fontFamily: "Fraunces_500Medium" },
   hourGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   hourChip: {
     minWidth: 64,
