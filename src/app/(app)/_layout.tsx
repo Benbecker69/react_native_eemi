@@ -34,6 +34,10 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen name="space/[id]" options={{ headerShown: true, title: "Espace" }} />
+        <Stack.Screen name="security" options={{ headerShown: true, title: "Sécurité" }} />
+        <Stack.Screen name="profile-edit" options={{ headerShown: true, title: "Modifier mon profil" }} />
+        <Stack.Screen name="check-in/[id]" options={{ headerShown: true, title: "Arrivée" }} />
+        <Stack.Screen name="scan-space" options={{ headerShown: true, title: "Scanner le code" }} />
       </Stack>
     </View>
   );

@@ -119,6 +119,27 @@ export function ProposalSkeleton() {
   );
 }
 
+/** Security screen: two field-shaped forms (e-mail, password) while /me loads. */
+export function SecurityFormSkeleton() {
+  return (
+    <LoadingGroup style={styles.stack}>
+      <View style={styles.formBlock}>
+        <Skeleton height={17} width="40%" />
+        <Skeleton height={48} radius={12} />
+        <Skeleton height={48} radius={12} />
+        <Skeleton height={52} radius={12} style={styles.gapTop} />
+      </View>
+      <View style={styles.formBlock}>
+        <Skeleton height={17} width="35%" />
+        <Skeleton height={48} radius={12} />
+        <Skeleton height={48} radius={12} />
+        <Skeleton height={48} radius={12} />
+        <Skeleton height={52} radius={12} style={styles.gapTop} />
+      </View>
+    </LoadingGroup>
+  );
+}
+
 const styles = StyleSheet.create({
   list: { gap: 12 },
   stack: { gap: 16 },
@@ -128,4 +149,5 @@ const styles = StyleSheet.create({
   rowMeta: { alignItems: "flex-end", gap: 8 },
   gapTop: { marginTop: 8 },
   hourGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  formBlock: { gap: 10 },
 });

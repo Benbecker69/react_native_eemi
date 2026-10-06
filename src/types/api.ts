@@ -59,6 +59,7 @@ export type ReservationDto = {
 // A refused attempt is still a normal, 201 response — never an error.
 export type CheckInReason =
   | "NOT_CONFIRMED"
+  | "WRONG_SPACE"
   | "TOO_EARLY"
   | "TOO_LATE"
   | "LOW_ACCURACY"
@@ -72,6 +73,8 @@ export type CheckInDto = {
   reason: CheckInReason | null;
   distanceM: number;
   accuracyM: number;
+  // The space id read from a scanned QR code, when the attempt used one.
+  scannedSpaceId: string | null;
   createdAt: string;
 };
 
@@ -125,6 +128,7 @@ export type ApiErrorCode =
   | "INSUFFICIENT_CREDITS"
   | "RESERVATION_NOT_FOUND"
   | "SPACE_NOT_FOUND"
+  | "USER_NOT_FOUND"
   | "EMAIL_TAKEN"
   | "SLOT_TAKEN"
   | "SPACE_UNAVAILABLE"
