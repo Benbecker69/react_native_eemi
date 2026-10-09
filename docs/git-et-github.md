@@ -111,6 +111,9 @@ d'abord l'accès au backend, puis la session, puis les écrans.
 | 2026-10-09 | `fdc9165` | `[fix] raise small touch targets to 44pt and remove a debug log`                     |
 | 2026-10-09 | `1afa892` | `[fix] answer gateway errors in French`                                              |
 | 2026-10-09 | `ee70a64` | `[build] update Expo packages to the latest SDK 57 patch versions`                   |
+| 2026-10-09 | `88d5a30` | `[docs] write the README as a grading guide and document each graded area`           |
+| 2026-10-09 | `67ef881` | `[docs] describe the Security screen lock as a device passcode prompt`               |
+| 2026-10-09 | `22fc9d8` | `[docs] document how AI was used in the README`                                      |
 
 ```bash
 git log --oneline          # l'historique complet
@@ -134,7 +137,8 @@ Cinq étapes se distinguent :
 5. **La relecture (9 octobre).** En écrivant la documentation, j'ai relu tout
    le code : zones tactiles portées à 44 pt, messages de la passerelle en
    français, paquets Expo mis à jour, puis le README et les documents de
-   `docs/`.
+   `docs/`, la description du verrou de l'écran « Sécurité » et la section sur
+   l'usage de l'IA.
 
 ## Deux dépôts, un contrat
 
