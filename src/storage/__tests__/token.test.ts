@@ -3,7 +3,7 @@ import { clearToken, readToken, saveToken } from "@/storage/token";
 
 // expo-secure-store wraps the iOS Keychain — a native module Jest can't run,
 // so it's mocked here rather than exercised for real (that happens on the
-// iPhone instead, per the plan's Phase 3 verification step).
+// iPhone instead).
 jest.mock("expo-secure-store", () => ({
   getItemAsync: jest.fn(),
   setItemAsync: jest.fn(),

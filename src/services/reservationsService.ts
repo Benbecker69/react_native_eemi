@@ -1,7 +1,7 @@
 import type { Page, ReservationDto } from "@/types/api";
 import { apiFetch } from "./api";
 
-// Business intents, not URLs — see the `backend-api-client` skill.
+// Business intents, not URLs.
 
 export type ReservationsScope = "upcoming" | "past" | "all";
 

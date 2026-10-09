@@ -12,7 +12,7 @@ import { listNearbySpaces } from "@/services/spacesService";
 import { useBookingForm } from "@/features/booking/useBookingForm";
 import { formatDistance } from "@/utils/format";
 
-// Modal, one-off action (see `mobile-design`, "Navigation pattern") — the
+// Modal, one-off action — the
 // entry point is the "Réserver près de moi" card on the Réserver tab, which
 // already holds a fresh, permission-checked position before pushing here (see
 // `components/SpacesPane.tsx`). This screen never asks for location itself.

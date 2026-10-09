@@ -10,9 +10,8 @@ type SkeletonProps = {
 };
 
 // One placeholder block that pulses while data loads — shown instead of a
-// spinner so the screen keeps its shape (see `mobile-design`, "Every data
-// screen has four states"). Plain `Animated` on the native driver: no
-// animation library (decision in CLAUDE.md, "Décisions actées").
+// spinner so the screen keeps its shape. Plain `Animated` on the native
+// driver: no animation library.
 export function Skeleton({ width = "100%", height, radius = 8, style }: SkeletonProps) {
   const colors = useColors();
   const [opacity] = useState(() => new Animated.Value(0.55));

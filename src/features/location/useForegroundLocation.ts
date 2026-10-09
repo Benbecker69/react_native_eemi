@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import * as Location from "expo-location";
 
-// Foreground-only, one-shot reads — see `expo-best-practices` ("Permissions")
-// and `mobile-design` ("Permissions are UX"): never watch/poll the GPS,
+// Foreground-only, one-shot reads: never watch/poll the GPS,
 // never prompt without an in-app explanation first, and treat a refusal as a
 // normal case with a working fallback, not an error.
 
@@ -68,8 +67,8 @@ export function useForegroundLocation(
   // rather than killing it while the user is in Settings, so without an
   // `AppState` listener a permission change made there is only picked up
   // after a full force-quit, never a simple switch back — the same class of
-  // bug as the Phase 3 `focusManager`/`onlineManager` fix (see CLAUDE.md
-  // "Pièges"). Clearing `coords` when permission is no longer granted keeps
+  // bug as the `focusManager`/`onlineManager` fix in `storage/queryClient.ts`.
+  // Clearing `coords` when permission is no longer granted keeps
   // a revoked-while-backgrounded permission from leaving a stale position
   // behind.
   const checkPermission = useCallback(async () => {

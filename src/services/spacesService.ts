@@ -1,7 +1,7 @@
 import type { NearbyResult, SpaceAvailability } from "@/types/api";
 import { apiFetch } from "./api";
 
-// Business intent, not a URL — see the `backend-api-client` skill.
+// Business intent, not a URL.
 // `GET /spaces/nearby` works without lat/lng too (alphabetical order,
 // `hasPosition: false`): that's the fallback when location is refused, not
 // an error — see docs/api-mobile.md.

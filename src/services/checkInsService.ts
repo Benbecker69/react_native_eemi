@@ -1,7 +1,7 @@
 import type { CheckInDto, CheckInHistoryDto, Page } from "@/types/api";
 import { apiFetch } from "./api";
 
-// Business intent, not a URL — see the `backend-api-client` skill.
+// Business intent, not a URL.
 // Read-only history (every attempt, accepted or refused — see docs/api-mobile.md).
 export function listCheckIns(
   input: { cursor?: string | null; limit?: number } = {},

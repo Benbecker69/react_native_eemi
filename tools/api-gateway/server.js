@@ -2,8 +2,8 @@
 "use strict";
 
 /**
- * Allow-list gateway for the mobile app's tunnel (see CLAUDE.md § Backend,
- * § Pièges, and .claude/PLAN.md Phase 2).
+ * Allow-list gateway for the mobile app's tunnel (see README.md and
+ * docs/backend-et-securite.md).
  *
  * ngrok exposes THIS process to the public internet, not the Next.js server
  * directly — so only /api/mobile/v1/* ever leaves the LAN. The website and
@@ -17,7 +17,7 @@
  *
  * Default upstream targets the IPv6 loopback: on this machine another,
  * unrelated project's server occupies 127.0.0.1:3000 (IPv4), while the
- * Next.js dev server answers on [::1]:3000 — verified in CLAUDE.md.
+ * Next.js server answers on [::1]:3000. Set UPSTREAM for another machine.
  */
 
 const http = require("node:http");

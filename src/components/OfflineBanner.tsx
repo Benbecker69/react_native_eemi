@@ -5,9 +5,9 @@ import { useColors } from "@/theme/colors";
 
 // A static top strip, not a toast: it has to stay visible for as long as the
 // connection is down. Mounted once in `(app)/_layout.tsx`, above the tab
-// navigator, so every screen gets it without repeating the wiring — see
-// `expo-best-practices`, "show cached data first and flag it as possibly
-// stale". `isConnected === false` only (not `isInternetReachable`, which
+// navigator, so every screen gets it without repeating the wiring: cached
+// data is shown first, and flagged as possibly stale. `isConnected === false`
+// only (not `isInternetReachable`, which
 // stays `null` while still probing and would flicker the banner on every
 // screen open).
 export function OfflineBanner() {

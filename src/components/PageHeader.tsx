@@ -5,9 +5,9 @@ import { Logo } from "@/components/Logo";
 type PageHeaderProps = { title: string; description?: string };
 
 // The top of each of the three root tabs (Réserver, Historique, Profil):
-// the brand mark stays visible at every "home base" of the app (see the
-// DA-alignment plan, §3 — not repeated on pushed screens, which already
-// have a native back button establishing context), then the page's own
+// the brand mark stays visible at every "home base" of the app (not
+// repeated on pushed screens, which already have a native back button
+// establishing context), then the page's own
 // title in Fraunces, matching the web's own `font-display text-2xl
 // font-medium` h1 treatment exactly.
 export function PageHeader({ title, description }: PageHeaderProps) {

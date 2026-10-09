@@ -1,16 +1,16 @@
 import { readToken } from "@/storage/token";
 import { ApiError } from "./ApiError";
 
-// The one client every service goes through — see the `backend-api-client`
-// skill. Nothing outside `src/services` calls `fetch` against the API.
+// The one client every service goes through. Nothing outside `src/services`
+// calls `fetch` against the API.
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 const TIMEOUT_MS = 15_000;
 
 /**
  * Runs once, on any 401 from any call. `AuthContext` registers this to clear
- * the stored token and the query cache — see docs/api-mobile.md "Session" and
- * the plan's "401 global → nettoyage du jeton et du cache → retour connexion".
+ * the stored token and the query cache, which sends the user back to the
+ * sign-in screen — see docs/api-mobile.md in the web repo.
  */
 let onUnauthorized: (() => void) | null = null;
 export function setUnauthorizedHandler(handler: (() => void) | null): void {

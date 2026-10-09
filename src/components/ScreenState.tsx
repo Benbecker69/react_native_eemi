@@ -8,8 +8,8 @@ type ScreenStateProps = {
   retryLabel?: string;
 };
 
-// The empty/error placeholder shared by every data screen — see
-// `mobile-design`, "Every data screen has four states". Loading is shown
+// The empty/error placeholder shared by every data screen (each of them has
+// four states: loading, error, empty, success). Loading is shown
 // with `ActivityIndicator` directly where it's needed; this only covers the
 // other two so they don't drift into slightly different implementations.
 export function ScreenState({ message, tone = "muted", onRetry, retryLabel = "Réessayer" }: ScreenStateProps) {

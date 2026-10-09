@@ -22,8 +22,7 @@ import { PasswordField } from "@/components/PasswordField";
 import { RevealOnMount } from "@/components/RevealOnMount";
 
 // Mirrors the web app's /connexion copy and its demo quick-fill pattern (see
-// docs/base-de-donnees.md there) — continuity with the web, see CLAUDE.md
-// "Identité". Demo password `demo1234` only fills the fields; the person
+// docs/base-de-donnees.md there) — continuity with the web. Demo password `demo1234` only fills the fields; the person
 // still taps "Se connecter" themselves, same as on the web.
 const DEMO_ACCOUNT = { email: "camille@example.com", password: "demo1234" };
 

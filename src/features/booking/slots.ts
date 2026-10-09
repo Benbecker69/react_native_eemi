@@ -3,11 +3,10 @@ import { addMonths, endOfMonth, startOfDay, startOfMonth } from "./calendar";
 
 // Pure booking rules shared by the two booking screens (`space/[id]` and
 // `reserve`) — a rule about which hours can be booked never lives inside a
-// component (see the `backend-api-client` skill, "no business rule inside a
-// screen"). Times are device-local on purpose, like `utils/format.ts`.
+// component. Times are device-local on purpose, like `utils/format.ts`.
 
-// Same business hours as the web booking flow (`(app)/reserver/[spaceId]/
-// _components/creneau-picker.tsx`) — a space isn't bookable outside them on
+// Same business hours as the web booking flow (`src/lib/booking/slots.ts`
+// in the web repo) — a space isn't bookable outside them on
 // either platform, and both must agree on what "available" means.
 export const OPENING_HOUR = 9;
 export const CLOSING_HOUR = 18; // a booking ends at 18:00 at the latest

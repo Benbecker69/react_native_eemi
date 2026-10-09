@@ -19,7 +19,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 function RootNavigator() {
   const { state } = useAuth();
   // Only the display face is loaded here — body text stays on the system
-  // font for now (see the DA-alignment plan's typography section).
+  // font.
   const [fontsLoaded] = useFonts({ Fraunces_500Medium, Fraunces_600SemiBold });
   const ready = state.status !== "loading" && fontsLoaded;
 

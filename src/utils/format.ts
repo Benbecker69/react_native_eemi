@@ -1,8 +1,7 @@
 import type { CheckInReason } from "@/types/api";
 
 // Pure, unit-testable formatting shared by every screen — a date/distance
-// computation never belongs inline in a component (see the
-// `backend-api-client` skill, "no business rule inside a screen").
+// computation never belongs inline in a component.
 // Device-local time zone on purpose (same reasoning as the web app's own
 // `toLocaleDateString` calls): the phone is wherever its owner physically is.
 

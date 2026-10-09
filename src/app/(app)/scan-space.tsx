@@ -17,7 +17,7 @@ import { useToast } from "@/features/feedback/ToastContext";
 import { checkInReasonLabel } from "@/utils/format";
 
 // Second way to validate an arrival, alongside (never instead of) the plain
-// GPS check-in on the reservation screen — see the plan's reasoning: `Space`
+// GPS check-in on the reservation screen — the reasoning: `Space`
 // has no coordinates of its own, only its `Location` does, so GPS alone
 // can confirm the building but never which space inside it. Scanning the QR
 // glued on the reserved space adds that last bit of precision.
@@ -53,7 +53,7 @@ export default function ScanSpaceScreen() {
   });
   const expectedSpaceId = reservationQuery.data?.space.id ?? null;
   // Only inside the real arrival window does a scan perform the check-in —
-  // see the plan's correction: scanning early to confirm "is this the right
+  // a deliberate rule: scanning early to confirm "is this the right
   // room?" must never itself count as the arrival (someone scanning at 11h
   // for a midday reservation, then stepping out for lunch, must still see
   // "Trop tôt" at 11h05, not a reservation already marked done).

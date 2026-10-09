@@ -1,7 +1,7 @@
 import type { AuthResult, MemberType, MeUser } from "@/types/api";
 import { apiFetch } from "./api";
 
-// Business intents, not URLs — see the `backend-api-client` skill.
+// Business intents, not URLs.
 
 export function register(input: {
   name: string;
@@ -45,10 +45,10 @@ export async function updateProfile(input: {
 }
 
 /**
- * Neither of these exists on the web yet — its own "Sécurité" tab is
- * read-only (see docs/api-mobile.md "POST /me/password"). Both require the
- * current password: a stored session token alone doesn't prove it's still
- * the account's owner typing, not a device that only has a stolen token.
+ * The same two changes as the web's "Sécurité" tab (see docs/api-mobile.md
+ * in the web repo, "POST /me/password"). Both require the current password:
+ * a stored session token alone doesn't prove it's still the account's owner
+ * typing, not a device that only has a stolen token.
  */
 export function changePassword(input: { currentPassword: string; newPassword: string }): Promise<void> {
   return apiFetch<void>("/me/password", { method: "POST", body: input });

@@ -23,11 +23,10 @@ import { useScreenLock } from "@/features/auth/useScreenLock";
 import { useToast } from "@/features/feedback/ToastContext";
 import { SecurityFormSkeleton } from "@/components/skeletons";
 
-// Neither form here exists on the web yet — its own "Sécurité" tab is
-// read-only and says password changes are "coming in a future update" (see
-// docs/api-mobile.md "POST /me/password"). Both require the current
-// password: a stored session token alone doesn't prove it's still the
-// account's owner typing, not a device that only has a stolen token.
+// The same two changes as the web's own "Sécurité" tab (see docs/api-mobile.md
+// in the web repo, "POST /me/password"). Both require the current password: a
+// stored session token alone doesn't prove it's still the account's owner
+// typing, not a device that only has a stolen token.
 //
 // The screen itself is also gated behind Face ID / Touch ID / the device
 // passcode (see `useScreenLock`) — one more reason a glanced-at or borrowed

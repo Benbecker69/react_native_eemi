@@ -2,10 +2,8 @@ import { useColorScheme } from "react-native";
 
 // The real palette of the web app's `src/app/globals.css` (its `:root` /
 // `@media (prefers-color-scheme: dark)` tokens, --ink/--pine/--ochre/...),
-// read directly from source rather than carried over from an early
-// "continuity" guess — the web's own palette drifted during its "premium"
-// design pass (see its CLAUDE.md "Limites techniques connues"), and this
-// file hadn't followed. `ochre` is the web's secondary accent
+// read directly from source, so both apps share one identity. `ochre` is
+// the web's secondary accent
 // ("alerte/places limitées" — busy/warning states), not used here before.
 const palette = {
   light: {

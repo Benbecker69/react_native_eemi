@@ -71,8 +71,7 @@ export function useBookingForm(spaceId: string | undefined, options: { preselect
     },
     onSuccess: (result) => {
       // Anti double-tap is `mutation.isPending` disabling the button; these
-      // invalidations keep credits, lists and busy flags in sync everywhere —
-      // see the `backend-api-client` skill's own "invalidate the cache" note.
+      // invalidations keep credits, lists and busy flags in sync everywhere.
       queryClient.invalidateQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["reservations"] });
       queryClient.invalidateQueries({ queryKey: ["nearby"] });
