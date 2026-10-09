@@ -5,29 +5,19 @@ import * as LocalAuthentication from "expo-local-authentication";
 export type ScreenLockState = "checking" | "locked" | "unlocked" | "unavailable";
 
 /**
- * Gates a screen behind Face ID / Touch ID / the device passcode.
+ * Gates a screen behind the device's own authentication.
  *
- * Biometrics are attempted first, forced via `disableDeviceFallback: true`:
- * left at its default (`false`), iOS's own combined policy
- * (`LAPolicyDeviceOwnerAuthentication`) can decide on its own to show the
- * passcode screen straight away without visibly attempting Face ID —
- * forcing biometrics-only for this first attempt
- * (`LAPolicyDeviceOwnerAuthenticationWithBiometrics`) guarantees Face ID is
- * actually tried. Any failure there (wrong face, cancel, camera obstructed,
- * or no biometric enrolled at all) falls through to a second attempt with
- * the passcode allowed, so "Face ID ou le code" holds either way.
+ * A biometrics-only attempt comes first (`disableDeviceFallback: true`).
+ * When it isn't available or doesn't succeed, a second attempt allows the
+ * device passcode. In Expo Go on the test iPhone, the passcode prompt is the
+ * one that appears.
  *
- * Still reported as not triggering on a real iPhone even with that forced —
- * the remaining likely cause: `authenticateAsync` was being called on mount,
- * while the screen's own push transition animation was still running. iOS
- * can silently refuse to present Face ID while the app isn't yet the fully
- * settled frontmost window, which looks exactly like "asked for the code,
- * Face ID never showed" from the outside. `InteractionManager.runAfterInteractions`
- * defers the first attempt until that animation has finished.
+ * The first attempt is deferred with `InteractionManager.runAfterInteractions`
+ * so it doesn't fire while the screen's push transition is still running.
  *
- * If the device has neither biometrics nor a passcode set up at all, there
- * is nothing to authenticate against: the screen opens unguarded rather than
- * locking the user out of their own account settings permanently.
+ * If the device has no passcode set up at all, there is nothing to
+ * authenticate against: the screen opens unguarded rather than locking the
+ * user out of their own account settings permanently.
  */
 export function useScreenLock(promptMessage: string) {
   const [state, setState] = useState<ScreenLockState>("checking");

@@ -109,14 +109,17 @@ d'écran reste visible sur l'écran suivant.
 
 ## Permissions
 
-Trois permissions, chacune demandée **au moment où elle sert**, avec une
+Deux permissions, chacune demandée **au moment où elle sert**, avec une
 explication, et avec une issue en cas de refus.
 
 | Permission  | Demandée quand                                             | Explication avant                                              | En cas de refus                                                      |
 | ----------- | ---------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
 | Position    | « Autoriser la localisation », « Réserver près de moi », validation d'une arrivée | Encadré dans l'onglet Réserver, message sur les cartes | Liste alphabétique, carte grisée, réservation possible ; « Ouvrir les réglages » |
 | Caméra      | Ouverture de l'écran de scan                               | Écran qui explique l'usage, bouton « Autoriser l'appareil photo » | « Ouvrir les réglages », retour à la réservation, « Valider sans scanner » |
-| Face ID     | Ouverture de l'écran « Sécurité »                          | Message de la fenêtre d'iOS                                    | Repli sur le code de l'appareil ; écran « Accès verrouillé » avec « Réessayer » |
+
+L'écran « Sécurité » ne demande pas de permission : à son ouverture, iOS
+demande le code de l'appareil. Si la saisie est annulée, l'écran « Accès
+verrouillé » propose « Réessayer » et « Retour ».
 
 Aucune permission n'est demandée au lancement. Les textes affichés par iOS sont
 dans `app.json`. Le détail par permission est dans

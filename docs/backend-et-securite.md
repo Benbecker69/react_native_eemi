@@ -208,14 +208,14 @@ revérifiées au retour au premier plan et au retour du réseau.
 | Routes de l'API                        | Toutes exigent le jeton, sauf la connexion, l'inscription et `/health`                                   |
 | Données d'un autre utilisateur         | Le serveur filtre par propriétaire : une réservation d'un autre compte répond `404`                      |
 | Actions sensibles du compte            | Mot de passe actuel exigé pour changer d'e-mail ou de mot de passe                                       |
-| Écran « Sécurité »                     | Verrouillé par Face ID ou le code de l'appareil (`useScreenLock`, `expo-local-authentication`)           |
+| Écran « Sécurité »                     | Verrouillé par le code de l'appareil (`useScreenLock`, `expo-local-authentication`)                      |
 | Changement de mot de passe             | Le serveur révoque les autres sessions                                                                   |
 | Tentatives de connexion                | Frein côté serveur : 10 échecs en 10 minutes pour une adresse                                            |
 | Exposition du backend                  | La passerelle ne laisse passer que `/api/mobile/v1/*`                                                    |
 | Validation d'une arrivée               | Décidée par le serveur ; aucun contournement dans l'application                                          |
-| Permissions du téléphone               | Position (pendant l'utilisation), caméra, Face ID : chacune demandée au moment où elle sert              |
+| Permissions du téléphone               | Position (pendant l'utilisation) et caméra : chacune demandée au moment où elle sert                     |
 
-Si l'appareil n'a ni Face ID ni code, il n'y a rien pour s'authentifier :
+Si l'appareil n'a pas de code, il n'y a rien pour s'authentifier :
 l'écran « Sécurité » s'ouvre sans verrou, pour ne pas bloquer définitivement
 l'accès à ses propres réglages. Les formulaires exigent toujours le mot de
 passe actuel.

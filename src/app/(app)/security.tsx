@@ -28,8 +28,8 @@ import { SecurityFormSkeleton } from "@/components/skeletons";
 // stored session token alone doesn't prove it's still the account's owner
 // typing, not a device that only has a stolen token.
 //
-// The screen itself is also gated behind Face ID / Touch ID / the device
-// passcode (see `useScreenLock`) — one more reason a glanced-at or borrowed
+// The screen itself is also gated behind the device passcode (see
+// `useScreenLock`) — one more reason a glanced-at or borrowed
 // phone can't reach these forms, on top of the current-password requirement
 // inside them.
 export default function SecurityScreen() {

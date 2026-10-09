@@ -125,7 +125,7 @@ une arrivée créés d'un côté se voient de l'autre.
 | Position              | `expo-location`, lecture unique au premier plan          | Pas de suivi, pas de localisation en arrière-plan                                           |
 | Scan                  | `expo-camera` (`CameraView`)                             | Lit les QR codes, disponible dans Expo Go                                                   |
 | Cartes                | `react-native-maps`                                      | Apple Plans dans Expo Go, sans clé d'API                                                    |
-| Écran sensible        | `expo-local-authentication`                              | Face ID ou code de l'appareil avant l'écran « Sécurité »                                    |
+| Écran sensible        | `expo-local-authentication`                              | Le code de l'appareil est demandé avant l'écran « Sécurité »                                |
 | Accès au backend local | Tunnel ngrok + passerelle qui ne laisse passer que l'API | Poste d'entreprise à distance, sans droits d'administrateur : ses ports ne sont pas joignables ; le site et l'administration ne sont pas exposés |
 | Tests                 | Jest (`jest-expo`) sur les règles et le client de l'API  | Ce sont les parties qui se trompent sans que cela se voie                                   |
 

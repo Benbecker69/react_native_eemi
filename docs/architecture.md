@@ -73,7 +73,7 @@ src/
       profile-edit.tsx        modifier son profil
       security.tsx            changer e-mail et mot de passe
   features/
-    auth/                     AuthContext, verrou Face ID, prénom / nom
+    auth/                     AuthContext, verrou de l'écran Sécurité, prénom / nom
     booking/                  calendrier, créneaux, formulaire de réservation
     checkins/                 lecture du QR code, regroupement de l'historique
     feedback/                 toasts, tirer pour rafraîchir
@@ -133,7 +133,7 @@ Expo Router construit la navigation à partir des fichiers de `src/app`.
 | Nouvelle réservation     | `(app)/new-reservation.tsx`      | **fenêtre modale**         | Choisir un espace, puis un créneau                   |
 | Scanner le code          | `(app)/scan-space.tsx`           | pile                       | Caméra, lecture du QR code                           |
 | Modifier mon profil      | `(app)/profile-edit.tsx`         | pile                       | Prénom, nom, situation                               |
-| Sécurité                 | `(app)/security.tsx`             | pile, derrière Face ID     | E-mail et mot de passe                               |
+| Sécurité                 | `(app)/security.tsx`             | pile, derrière le code     | E-mail et mot de passe                               |
 
 Ce que le sujet demande de retrouver :
 

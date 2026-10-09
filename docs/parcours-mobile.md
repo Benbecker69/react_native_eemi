@@ -19,7 +19,7 @@ en quelques gestes, et prouver sur place que l'on est bien arrivé.
 | Il sait où je suis                   | Espaces triés par distance, « Réserver près de moi », validation de l'arrivée dans un rayon de 150 m |
 | Il a une caméra                      | Scan du QR code collé sur l'espace : il confirme **quel** espace, en plus du lieu              |
 | Il est dans ma poche                 | La prochaine réservation dès l'ouverture, les dernières données affichées même sans réseau     |
-| Il reconnaît son propriétaire        | L'écran « Sécurité » s'ouvre après Face ID ou le code de l'appareil                            |
+| Il reconnaît son propriétaire        | L'écran « Sécurité » s'ouvre après le code de l'appareil                                       |
 | Il a un stockage chiffré             | Le jeton de session est dans le trousseau d'iOS                                                |
 
 Ce que l'application ne refait pas, volontairement : la page d'accueil publique,
@@ -189,7 +189,7 @@ Fichiers : `src/app/(app)/(tabs)/history.tsx`, `src/app/(app)/check-in/[id].tsx`
 - **Modifier mon profil** : prénom, nom, et situation (freelance, entreprise,
   étudiant). C'est la même ligne en base que sur le site : une modification
   faite ici se voit là-bas.
-- **Sécurité** : l'écran demande Face ID ou le code de l'appareil avant de
+- **Sécurité** : l'écran demande le code de l'appareil avant de
   s'ouvrir. Il permet de changer d'adresse e-mail et de mot de passe ; les deux
   demandent le mot de passe actuel. Changer de mot de passe déconnecte les
   autres appareils.

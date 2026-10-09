@@ -92,8 +92,9 @@ recharger à chaque changement d'onglet.
 
 ## Vérifier l'application à la main
 
-Ce qui dépend du téléphone (caméra, GPS, Face ID, trousseau, réseau) ne se teste
-pas par un test unitaire. Le projet fournit de quoi le vérifier vite :
+Ce qui dépend du téléphone (caméra, GPS, code de l'appareil, trousseau, réseau)
+ne se teste pas par un test unitaire. Le projet fournit de quoi le vérifier
+vite :
 
 | Besoin                                   | Moyen                                                                              |
 | ---------------------------------------- | ---------------------------------------------------------------------------------- |
