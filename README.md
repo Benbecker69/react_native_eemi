@@ -28,6 +28,7 @@ Projet fil rouge individuel — Ilias Benharrat, M2 EEMI, 2026.
 - [Tester le scan du QR code](#tester-le-scan-du-qr-code)
 - [Tester la géolocalisation](#tester-la-géolocalisation)
 - [Expo Go et development build](#expo-go-et-development-build)
+- [Usage de l'IA](#usage-de-lia)
 - [Limites connues](#limites-connues)
 - [Documentation](#documentation)
 
@@ -408,6 +409,88 @@ iPhone, sans Mac ni compte Apple Developer. Conséquences :
 
 Expo Go ouvre les projets du SDK qu'il prend en charge : ce projet est en
 SDK 57.
+
+## Usage de l'IA
+
+Cette application a été développée avec un agent IA, après le site web et avec
+la même méthode. Il a écrit le code sous ma direction : je cadrais le travail,
+je prenais les décisions techniques et je validais chaque modification avant
+qu'elle soit commitée.
+
+### Outils utilisés
+
+| Outil                                           | Usage                                                                                                                                          |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| ChatGPT                                         | Rédiger le prompt de départ : je lui ai donné une trentaine de lignes décrivant ce que je voulais, il en a fait un prompt adapté à Claude Code |
+| Claude Code                                     | Agent de développement dans le terminal : plan, code, tests, documentation                                                                     |
+| Claude Design                                   | Maquettes, que je validais avant le développement                                                                                              |
+| Jira, relié à Claude Code par un connecteur MCP | Tableau agile, sprints et tickets du projet, créés par l'agent                                                                                 |
+
+### Le prompt de départ
+
+Ce prompt fixait la façon de travailler avant toute ligne de code.
+
+- **Un rôle et un cadre.** Agir en lead développeur senior, commencer en mode
+  plan et me poser une trentaine de questions avant de développer. Toute
+  décision technique m'était soumise.
+- **Des règles écrites.** Un fichier de règles : commits en anglais, à
+  l'impératif, avec un tag ; une fonctionnalité par commit ; ne rien inventer ;
+  aucun commit ni push sans ma validation.
+- **Des fiches de connaissances (« skills »).** Pour que l'agent travaille sur
+  la version actuelle d'Expo sans refaire les mêmes recherches à chaque
+  session : des fiches écrites pour le projet (interface mobile, bonnes
+  pratiques Expo, client de l'API) et des copies de fiches publiées par Expo
+  et par Vercel (Expo Router, interface native, chargement des données).
+- **Un fichier de contexte.** Il décrit le projet et ses règles, et dit quelle
+  fiche consulter pour quel besoin ; à défaut, la documentation officielle. Il
+  est tenu à jour au fil du projet : c'est lui qui permet de reprendre le
+  travail dans une conversation neuve.
+- **Des agents spécialisés.** Un agent lit les PDF des sujets avec un modèle
+  plus léger, pour économiser le modèle principal ; un autre tenait le rôle de
+  product owner.
+- **Une limite de contexte.** Au-delà de 60 % de la fenêtre de contexte, la
+  conversation est compactée, puis le contexte est rechargé depuis le fichier
+  de contexte.
+
+Les règles, les fiches, le fichier de contexte et les agents sont sur mon
+poste : je ne les ai pas versionnés dans ce dépôt.
+
+### Tâches confiées, et ce que j'ai gardé
+
+| Confié à l'agent                                                    | Gardé pour moi                                                      |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Proposer le plan et l'architecture                                  | Répondre aux questions du plan et trancher chaque choix technique   |
+| Écrire le code : écrans, hooks, services, passerelle de l'API       | Relire et valider chaque modification avant qu'elle soit commitée   |
+| Écrire les tests unitaires et la documentation                      | Tester sur l'iPhone : l'agent n'a pas accès au téléphone            |
+
+### Une décision de l'IA que j'ai refusée
+
+L'agent a proposé un bouton « Confirmer quand même », qui aurait validé une
+arrivée dans l'application alors que le serveur l'avait refusée. Je l'ai
+refusé : le serveur doit rester seul juge d'une arrivée. Il n'existe aucun
+contournement dans l'application
+([docs/scan-qr.md](docs/scan-qr.md)).
+
+### Une partie que je peux expliquer intégralement
+
+Le scan du QR code : la lecture par la caméra, le contrôle du préfixe
+`repere:space:` avant tout appel réseau (`src/features/checkins/qr.ts`), la
+protection contre le double scan et l'envoi au serveur avec la position
+(`src/app/(app)/scan-space.tsx`). Détail : [docs/scan-qr.md](docs/scan-qr.md).
+
+### Limites et bugs rencontrés
+
+- **L'agent ne voit pas le téléphone.** Tout ce qui dépend de l'appareil
+  (caméra, position, code de l'appareil) n'est vérifié que lorsque je le teste
+  moi-même sur l'iPhone. Les deux bugs ci-dessous n'ont été trouvés qu'ainsi.
+- **Tous les appels en `404` au premier essai sur le téléphone.** L'adresse de
+  l'API dans `.env` n'avait pas le préfixe `/api/mobile/v1` : la passerelle
+  refusait les appels (commit `31475db`).
+- **Une session révoquée n'était détectée qu'après avoir fermé
+  l'application.** TanStack Query s'appuie par défaut sur des événements du
+  navigateur qui n'existent pas sur React Native. Correctif dans
+  `src/storage/queryClient.ts` ; explication dans
+  [docs/backend-et-securite.md](docs/backend-et-securite.md).
 
 ## Limites connues
 
