@@ -50,10 +50,6 @@ export function useScreenLock(promptMessage: string) {
         setState("unlocked");
         return;
       }
-      // Temporary diagnostic: if Face ID still doesn't visibly trigger, this
-      // line (visible in the Metro terminal) says why iOS refused it —
-      // remove once confirmed fixed on the real device.
-      console.log("[useScreenLock] biometric attempt failed:", biometric.error, biometric.warning);
     }
 
     // No biometric enrolled, or the attempt above didn't succeed: the

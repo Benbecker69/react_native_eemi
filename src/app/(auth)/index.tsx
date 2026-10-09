@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    minHeight: 36,
+    minHeight: 44,
   },
   field: { gap: 8 },
   input: {

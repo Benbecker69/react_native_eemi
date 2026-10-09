@@ -198,13 +198,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    minHeight: 40,
+    minHeight: 44,
     paddingHorizontal: 14,
     borderRadius: 999,
     borderWidth: StyleSheet.hairlineWidth,
     alignSelf: "flex-start",
   },
-  clearButton: { minHeight: 40, minWidth: 40, alignItems: "center", justifyContent: "center" },
+  clearButton: { minHeight: 44, minWidth: 44, alignItems: "center", justifyContent: "center" },
   sectionHeader: { paddingVertical: 8 },
   // Same size/weight as a Mes réservations day header: one consistent
   // heading style for "a label above a group of things" app-wide.
