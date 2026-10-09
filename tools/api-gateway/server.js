@@ -64,7 +64,7 @@ function isAllowedPath(pathname) {
 }
 
 function sendJson(res, status, body) {
-  res.writeHead(status, { "Content-Type": "application/json" });
+  res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
   res.end(JSON.stringify(body));
 }
 
@@ -73,11 +73,11 @@ const server = http.createServer((req, res) => {
   try {
     requestUrl = new URL(req.url, "http://gateway.local");
   } catch {
-    return sendJson(res, 400, { error: { code: "BAD_REQUEST", message: "Invalid URL." } });
+    return sendJson(res, 400, { error: { code: "BAD_REQUEST", message: "Adresse invalide." } });
   }
 
   if (!ALLOWED_METHODS.has(req.method) || !isAllowedPath(requestUrl.pathname)) {
-    return sendJson(res, 404, { error: { code: "NOT_FOUND", message: "Not found." } });
+    return sendJson(res, 404, { error: { code: "NOT_FOUND", message: "Ressource introuvable." } });
   }
 
   const chunks = [];
@@ -89,7 +89,7 @@ const server = http.createServer((req, res) => {
     size += chunk.length;
     if (size > MAX_BODY_BYTES) {
       rejected = true;
-      sendJson(res, 413, { error: { code: "PAYLOAD_TOO_LARGE", message: "Request body too large." } });
+      sendJson(res, 413, { error: { code: "PAYLOAD_TOO_LARGE", message: "Requête trop volumineuse." } });
       req.destroy();
       return;
     }
@@ -128,7 +128,7 @@ const server = http.createServer((req, res) => {
     upstreamReq.on("error", (error) => {
       console.error("[api-gateway] upstream error:", error.message);
       if (!res.headersSent) {
-        sendJson(res, 502, { error: { code: "BAD_GATEWAY", message: "Backend unreachable." } });
+        sendJson(res, 502, { error: { code: "BAD_GATEWAY", message: "Le serveur est injoignable. Réessayez dans un instant." } });
       } else {
         res.destroy();
       }
@@ -138,7 +138,7 @@ const server = http.createServer((req, res) => {
   });
 
   req.on("error", () => {
-    if (!res.headersSent) sendJson(res, 400, { error: { code: "BAD_REQUEST", message: "Request error." } });
+    if (!res.headersSent) sendJson(res, 400, { error: { code: "BAD_REQUEST", message: "Requête invalide." } });
   });
 });
 
