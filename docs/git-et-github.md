@@ -114,6 +114,7 @@ d'abord l'accès au backend, puis la session, puis les écrans.
 | 2026-10-09 | `88d5a30` | `[docs] write the README as a grading guide and document each graded area`           |
 | 2026-10-09 | `67ef881` | `[docs] describe the Security screen lock as a device passcode prompt`               |
 | 2026-10-09 | `22fc9d8` | `[docs] document how AI was used in the README`                                      |
+| 2026-10-09 | `6277f0c` | `[docs] bring the project timeline up to date`                                       |
 
 ```bash
 git log --oneline          # l'historique complet

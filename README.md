@@ -29,6 +29,7 @@ Projet fil rouge individuel — Ilias Benharrat, M2 EEMI, 2026.
 - [Tester la géolocalisation](#tester-la-géolocalisation)
 - [Expo Go et development build](#expo-go-et-development-build)
 - [Usage de l'IA](#usage-de-lia)
+- [Soutenance et live coding](#soutenance-et-live-coding)
 - [Limites connues](#limites-connues)
 - [Documentation](#documentation)
 
@@ -491,6 +492,19 @@ protection contre le double scan et l'envoi au serveur avec la position
   navigateur qui n'existent pas sur React Native. Correctif dans
   `src/storage/queryClient.ts` ; explication dans
   [docs/backend-et-securite.md](docs/backend-et-securite.md).
+
+## Soutenance et live coding
+
+- **Diaporama de soutenance** : [docs/soutenance.pdf](docs/soutenance.pdf)
+  (23 diapositives : produit, démonstration, architecture, base de données,
+  application mobile, Docker, usage de l'IA, limites).
+- **Live coding** : le tri des espaces par prix dans l'onglet Réserver, avec
+  trois choix : « Par défaut », « Moins cher », « Plus cher ». Fichiers
+  modifiés : `src/features/spaces/search.ts` (la fonction `sortSpaces`),
+  `src/components/SpacesPane.tsx` (le tri appliqué après la recherche) et
+  `src/app/(app)/(tabs)/book.tsx` (le sélecteur).
+- **Se repérer dans le code** : la table « Où intervenir pour… » de
+  [docs/architecture.md](docs/architecture.md).
 
 ## Limites connues
 
