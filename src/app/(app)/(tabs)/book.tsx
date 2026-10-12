@@ -10,12 +10,19 @@ import { SpacesPane } from "@/components/SpacesPane";
 import { ReservationsPane } from "@/components/ReservationsPane";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { useForegroundLocation } from "@/features/location/useForegroundLocation";
+import type { SpaceSort } from "@/features/spaces/search";
 
 type Mode = "spaces" | "reservations";
 
 const MODES: { value: Mode; label: string }[] = [
   { value: "spaces", label: "Espaces" },
   { value: "reservations", label: "Mes réservations" },
+];
+
+const SORTS: { value: SpaceSort; label: string }[] = [
+  { value: "default", label: "Par défaut" },
+  { value: "price-asc", label: "Moins cher" },
+  { value: "price-desc", label: "Plus cher" },
 ];
 
 // One tab for everything about booking (it replaces the old "Autour de moi"
@@ -41,6 +48,7 @@ export default function BookTabScreen() {
     if (params.mode === "spaces" || params.mode === "reservations") setMode(params.mode);
   }
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SpaceSort>("default");
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]} edges={["top"]}>
@@ -53,12 +61,20 @@ export default function BookTabScreen() {
           accessibilityLabel="Espaces ou mes réservations"
         />
         {mode === "spaces" ? (
-          <SearchBar value={search} onChangeText={setSearch} placeholder="Rechercher une salle" />
+          <>
+            <SearchBar value={search} onChangeText={setSearch} placeholder="Rechercher une salle" />
+            <SegmentedControl
+              options={SORTS}
+              value={sort}
+              onChange={setSort}
+              accessibilityLabel="Trier les espaces"
+            />
+          </>
         ) : null}
       </View>
 
       {mode === "spaces" ? (
-        <SpacesPane location={location} search={search} onClearSearch={() => setSearch("")} />
+        <SpacesPane location={location} search={search} onClearSearch={() => setSearch("")} sort={sort} />
       ) : (
         <ReservationsPane onBrowseSpaces={() => setMode("spaces")} />
       )}

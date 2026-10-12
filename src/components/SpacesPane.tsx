@@ -6,7 +6,7 @@ import { ScreenState } from "@/components/ScreenState";
 import { SpaceCard } from "@/components/SpaceCard";
 import { ListSkeleton } from "@/components/skeletons";
 import { ApiError } from "@/services/ApiError";
-import { filterSpaces } from "@/features/spaces/search";
+import { filterSpaces, sortSpaces, type SpaceSort } from "@/features/spaces/search";
 import { useSpaceBrowser } from "@/features/spaces/useSpaceBrowser";
 import { useManualRefresh } from "@/features/feedback/useManualRefresh";
 import type { ForegroundLocation } from "@/features/location/useForegroundLocation";
@@ -16,18 +16,19 @@ type SpacesPaneProps = {
   /** Text typed in the search bar; empty shows every space. */
   search: string;
   onClearSearch: () => void;
+  sort: SpaceSort;
 };
 
 // The "Espaces" half of the Réserver tab: a one-tap "près de moi" card, then
 // every space (nearest first once the position is known) filtered by the
 // search bar. Tapping a space opens its own page to pick day and hours.
-export function SpacesPane({ location, search, onClearSearch }: SpacesPaneProps) {
+export function SpacesPane({ location, search, onClearSearch, sort }: SpacesPaneProps) {
   const router = useRouter();
   const query = useSpaceBrowser(location.coords);
   const { refreshing, onRefresh } = useManualRefresh(() => query.refetch());
 
   const all = query.data?.items ?? [];
-  const items = filterSpaces(all, search);
+  const items = sortSpaces(filterSpaces(all, search), sort);
   const searching = search.trim().length > 0;
 
   // The permission is asked here, at the moment of the action, never at launch.
